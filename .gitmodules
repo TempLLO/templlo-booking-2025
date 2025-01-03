@@ -1,0 +1,3 @@
+[submodule "com.templlo.service.reservation/src/main/java/com/templlo/service/reservation/global/common"]
+	path = com.templlo.service.reservation/src/main/java/com/templlo/service/reservation/global/common
+	url = https://github.com/TempLLO/common.git
