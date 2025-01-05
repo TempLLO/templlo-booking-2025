@@ -1,0 +1,31 @@
+### 회원가입
+POST http://localhost:19091/api/users/sign-up
+Content-Type: application/json
+
+{
+  "loginId" : "test1234",
+  "email": "test@naver.com",
+  "password": "Test1234!!",
+  "userName": "홍길동",
+  "nickName" : "길동이",
+  "gender": "MALE",
+  "birth" : "1990-01-31",
+  "role" : "MEMBER",
+  "phone" : "010-1234-1234"
+}
+
+###
+POST http://localhost:19091/api/users/sign-up
+Content-Type: application/json
+
+{
+  "loginId" : "test1234",
+  "email": "test@naver.com",
+  "password": "Test1234!!",
+  "userName": "홍길동",
+  "nickName" : "길동이",
+  "gender": "maledddd",
+  "birth" : "1990-01-31",
+  "role" : "MEMBER",
+  "phone" : "010-1234-1234"
+}
