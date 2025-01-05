@@ -3,6 +3,17 @@ server:
 spring:
   application:
     name: user-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/templlo_user
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
 
 eureka:
   client:
