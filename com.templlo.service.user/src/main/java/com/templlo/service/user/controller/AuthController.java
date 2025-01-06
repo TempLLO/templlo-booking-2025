@@ -5,7 +5,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.templlo.service.user.common.ApiResponse;
+import com.templlo.service.user.common.response.ApiResponse;
+import com.templlo.service.user.common.response.BasicStatusCode;
 import com.templlo.service.user.dto.LoginRequestDto;
 import com.templlo.service.user.dto.TokenDto;
 import com.templlo.service.user.service.AuthService;
@@ -23,6 +24,6 @@ public class AuthController {
 	@PostMapping("/login")
 	public ApiResponse<TokenDto> login(@Valid @RequestBody LoginRequestDto request) {
 		TokenDto tokenDto = authService.login(request);
-		return ApiResponse.success(tokenDto);
+		return ApiResponse.of(BasicStatusCode.OK, tokenDto);
 	}
 }

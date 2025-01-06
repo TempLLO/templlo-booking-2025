@@ -1,4 +1,4 @@
-package com.templlo.service.user.common;
+package com.templlo.service.user.common.response;
 
 import java.util.List;
 

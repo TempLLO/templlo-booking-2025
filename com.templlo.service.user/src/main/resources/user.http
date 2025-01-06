@@ -1,4 +1,4 @@
-### 회원가입
+### 회원가입 - MEMBER
 POST http://localhost:19091/api/users/sign-up
 Content-Type: application/json
 
@@ -14,7 +14,23 @@ Content-Type: application/json
   "phone" : "010-1234-1234"
 }
 
-### 로그인
+### 회원가입 - TEMPLE_ADMIN
+POST http://localhost:19091/api/users/sign-up
+Content-Type: application/json
+
+{
+  "loginId" : "admin1000",
+  "email": "admin1000@naver.com",
+  "password": "Admin1234!!",
+  "userName": "김혜민",
+  "nickName" : "스님1",
+  "gender": "MALE",
+  "birth" : "1960-10-31",
+  "role" : "TEMPLE_ADMIN",
+  "phone" : "010-5678-9090"
+}
+
+### 로그인 - MEMBER
 POST http://localhost:19091/api/auth/login
 Content-Type: application/json
 
@@ -23,11 +39,11 @@ Content-Type: application/json
   "password": "Test1234!!"
 }
 
-### 로그인 실패
+### 로그인 - TEMPLE_ADMIN
 POST http://localhost:19091/api/auth/login
 Content-Type: application/json
 
 {
-  "loginId": "test1234",
-  "password": "Test12345678!!"
+  "loginId" : "admin1000",
+  "password": "Admin1234!!"
 }
