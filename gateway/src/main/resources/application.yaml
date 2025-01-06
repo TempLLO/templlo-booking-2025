@@ -38,6 +38,9 @@ spring:
         locator:
           enabled: true
 
+jwt:
+  secret: ${JWT_SECRET_KEY}
+
 eureka:
   client:
     service-url:
