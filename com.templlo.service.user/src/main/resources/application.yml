@@ -4,7 +4,7 @@ spring:
   application:
     name: user-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/templlo_user
+    url: jdbc:postgresql://localhost:5432/users
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
   jpa:
