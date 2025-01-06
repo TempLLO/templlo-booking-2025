@@ -4,6 +4,7 @@ import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.server.ServerWebExchange;
@@ -51,11 +52,19 @@ public class AuthenticationFilter implements GlobalFilter {
 		String loginId = String.valueOf(claims.get(CLAIM_LOGIN_ID));
 		String role = String.valueOf(claims.get(CLAIM_USER_ROLE));
 
-		exchange.getRequest().mutate()
+		ServerHttpRequest modifiedRequest = exchange.getRequest().mutate()
 			.header("X-Login-Id", loginId)
 			.header("X-User-Role", role)
 			.header("X-Token", accessToken)
 			.build();
+
+		log.info("Gateway User loginId : {} , role : {}", loginId, role);
+
+		exchange = exchange.mutate().request(modifiedRequest).build();
+
+		exchange.getRequest().getHeaders().forEach((name, values) -> {
+			log.debug("Header: {} = {}", name, values);
+		});
 
 		return chain.filter(exchange);
 	}
