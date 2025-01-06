@@ -1,5 +1,17 @@
 package com.templlo.service.user.entity.enums;
 
 public enum UserRole {
-	MEMBER, TEMPLE_ADMIN, MASTER
+	MEMBER("MEMBER"),
+	TEMPLE_ADMIN("TEMPLE_ADMIN"),
+	MASTER("MASTER");
+
+	private final String authority;
+
+	UserRole(String authority) {
+		this.authority = authority;
+	}
+
+	public String getAuthority() {
+		return this.authority;
+	}
 }
