@@ -24,3 +24,9 @@ eureka:
       defaultZone: http://localhost:19090/eureka/
     register-with-eureka: true
     fetch-registry: true
+
+logging:
+  level:
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate.sql: DEBUG
