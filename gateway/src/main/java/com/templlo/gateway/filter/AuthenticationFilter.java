@@ -54,6 +54,7 @@ public class AuthenticationFilter implements GlobalFilter {
 		exchange.getRequest().mutate()
 			.header("X-Login-Id", loginId)
 			.header("X-User-Role", role)
+			.header("X-Token", accessToken)
 			.build();
 
 		return chain.filter(exchange);
