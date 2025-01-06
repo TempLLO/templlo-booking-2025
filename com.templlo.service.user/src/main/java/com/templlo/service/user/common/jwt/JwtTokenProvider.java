@@ -23,12 +23,8 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class JwtTokenProvider {
 
-	public static final String AUTHORIZATION_HEADER = "Authorization";
-
-	private static final String CLAIM_USER_ID = "loginId";
+	private static final String CLAIM_LOGIN_ID = "loginId";
 	private static final String CLAIM_USER_ROLE = "role";
-
-	private static final String BEARER_PREFIX = "Bearer ";
 
 	private static final String TOKEN_TYPE = "type";
 	private static final String ACCESS_TOKEN = "access";
@@ -41,7 +37,6 @@ public class JwtTokenProvider {
 	private String secretKey;
 	private Key key;
 	private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
-
 
 	@PostConstruct
 	public void init() {
@@ -62,7 +57,7 @@ public class JwtTokenProvider {
 			.setIssuedAt(new Date(System.currentTimeMillis()))
 			.setExpiration(new Date(System.currentTimeMillis() + expireTime));
 
-		claims.put(CLAIM_USER_ID, loginId);
+		claims.put(CLAIM_LOGIN_ID, loginId);
 		claims.put(CLAIM_USER_ROLE, role);
 		claims.put(TOKEN_TYPE, tokenType);
 

@@ -16,7 +16,8 @@ public enum BasicStatusCode implements StatusCode {
 	BAD_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
 	UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "인증되지 않은 사용자입니다."),
 	FORBIDDEN(HttpStatus.FORBIDDEN, "권한이 부족합니다."),
-	INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "잘못된 비밀번호입니다. "),
+
+	INVALID_USER(HttpStatus.BAD_REQUEST, "아이디 또는 비밀번호를 확인해주세요. "),
 
 	NOT_FOUND(HttpStatus.NOT_FOUND, "요청 리소스를 찾을 수 없습니다."),
 	USER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 유저를 찾을 수 없습니다. "),

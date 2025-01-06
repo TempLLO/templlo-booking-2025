@@ -4,7 +4,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,9 +39,7 @@ public class AuthService {
 			return new TokenDto(accessToken, refreshToken);
 
 		} catch (BadCredentialsException e) {
-			throw new BaseException(BasicStatusCode.INVALID_PASSWORD);
-		} catch (UsernameNotFoundException e) {
-			throw new BaseException(BasicStatusCode.USER_NOT_FOUND);
+			throw new BaseException(BasicStatusCode.INVALID_USER);
 		}
 
 	}
