@@ -1,12 +1,16 @@
 package com.templlo.service.user.service;
 
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.templlo.service.user.common.excepion.BaseException;
 import com.templlo.service.user.common.jwt.JwtTokenProvider;
+import com.templlo.service.user.common.response.BasicStatusCode;
 import com.templlo.service.user.common.security.UserDetailsImpl;
 import com.templlo.service.user.dto.LoginRequestDto;
 import com.templlo.service.user.dto.TokenDto;
@@ -23,15 +27,23 @@ public class AuthService {
 	private final JwtTokenProvider jwtTokenProvider;
 
 	public TokenDto login(LoginRequestDto request) {
-		Authentication authentication = authenticationManager.authenticate(
-			new UsernamePasswordAuthenticationToken(request.loginId(), request.password()));
+		try {
+			Authentication authentication = authenticationManager.authenticate(
+				new UsernamePasswordAuthenticationToken(request.loginId(), request.password()));
 
-		UserDetailsImpl userDetails = (UserDetailsImpl)authentication.getPrincipal();
-		User user = userDetails.getUser();
+			UserDetailsImpl userDetails = (UserDetailsImpl)authentication.getPrincipal();
+			User user = userDetails.getUser();
 
-		String accessToken = jwtTokenProvider.createAccessToken(user.getLoginId(), user.getRole());
-		String refreshToken = jwtTokenProvider.createRefreshToken(user.getLoginId(), user.getRole());
+			String accessToken = jwtTokenProvider.createAccessToken(user.getLoginId(), user.getRole());
+			String refreshToken = jwtTokenProvider.createRefreshToken(user.getLoginId(), user.getRole());
 
-		return new TokenDto(accessToken, refreshToken);
+			return new TokenDto(accessToken, refreshToken);
+
+		} catch (BadCredentialsException e) {
+			throw new BaseException(BasicStatusCode.INVALID_PASSWORD);
+		} catch (UsernameNotFoundException e) {
+			throw new BaseException(BasicStatusCode.USER_NOT_FOUND);
+		}
+
 	}
 }
