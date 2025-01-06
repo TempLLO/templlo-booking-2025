@@ -14,4 +14,8 @@ public enum UserRole {
 	public String getAuthority() {
 		return this.authority;
 	}
+
+	public static UserRole fromString(String authority) {
+		return UserRole.valueOf(authority);
+	}
 }

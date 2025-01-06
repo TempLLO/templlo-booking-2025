@@ -30,6 +30,22 @@ Content-Type: application/json
   "phone" : "010-5678-9090"
 }
 
+### 회원가입 - MASTER
+POST http://localhost:19091/api/users/sign-up
+Content-Type: application/json
+
+{
+  "loginId" : "master9999",
+  "email": "master9999@naver.com",
+  "password": "Master9999!!",
+  "userName": "김갑수",
+  "nickName" : "최강관리자",
+  "gender": "MALE",
+  "birth" : "1995-01-31",
+  "role" : "MASTER",
+  "phone" : "010-1234-1234"
+}
+
 ### 로그인 - MEMBER
 POST http://localhost:19091/api/auth/login
 Content-Type: application/json
@@ -46,4 +62,13 @@ Content-Type: application/json
 {
   "loginId" : "admin1000",
   "password": "Admin1234!!"
+}
+
+### 로그인 - MASTER
+POST http://localhost:19091/api/auth/login
+Content-Type: application/json
+
+{
+  "loginId" : "master9999",
+  "password": "Master9999!!"
 }

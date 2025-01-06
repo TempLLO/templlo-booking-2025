@@ -1,0 +1,9 @@
+@loginId = test1234
+
+### 유저 조회 - MASTER
+GET http://localhost:19091/api/users/{{loginId}}
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3MzYxODQxMTYsImV4cCI6MTczNjE4NTkxNiwibG9naW5JZCI6Im1hc3Rlcjk5OTkiLCJyb2xlIjoiTUFTVEVSIiwidHlwZSI6ImFjY2VzcyJ9.PHDz2IRyO1mcq4N7NC1wfttsQH2Kkzmv9SVLQpGwADQ
+
+### 유저 조회 - TEMPLE_ADMIN
+GET http://localhost:19091/api/users/{{loginId}}
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3MzYxODQxOTEsImV4cCI6MTczNjE4NTk5MSwibG9naW5JZCI6ImFkbWluMTAwMCIsInJvbGUiOiJURU1QTEVfQURNSU4iLCJ0eXBlIjoiYWNjZXNzIn0._getR5xpUXMdD1ZTFmN4gx1x2G79y9XrUFcgi1FOxJQ
