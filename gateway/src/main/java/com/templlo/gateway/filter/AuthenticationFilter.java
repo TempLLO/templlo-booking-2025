@@ -37,13 +37,15 @@ public class AuthenticationFilter implements GlobalFilter {
 		}
 
 		String accessToken = getAccessTokenFromHeader(exchange);
-		if (jwtUtil.validateToken(accessToken) != JwtValidType.VALID_TOKEN) {
+		JwtValidType resultJwtType = jwtUtil.validateToken(accessToken);
+		if (resultJwtType != JwtValidType.VALID_TOKEN) {
+			log.error("Invalid Token Value : " + resultJwtType.getDescription());
 			exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
 			return exchange.getResponse().setComplete();
 		}
 
 		if(!jwtUtil.isAccessToken(accessToken)) {
-			log.error("[ERROR] Invalid Token Type");
+			log.error("Invalid Token Type");
 			exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
 			return exchange.getResponse().setComplete();
 		}
