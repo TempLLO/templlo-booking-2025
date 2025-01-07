@@ -1,4 +1,4 @@
-package com.templlo.service.user.common.config;
+package com.templlo.service.user.common.filter;
 
 import java.io.IOException;
 

@@ -1,4 +1,4 @@
-package com.templlo.service.user.common.config;
+package com.templlo.service.user.common.security;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.*;
 
@@ -13,6 +13,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.templlo.service.user.common.filter.AuthenticationFilter;
 
 import lombok.RequiredArgsConstructor;
 
