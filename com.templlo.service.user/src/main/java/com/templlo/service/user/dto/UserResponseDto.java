@@ -1,8 +1,11 @@
 package com.templlo.service.user.dto;
 
+import java.util.UUID;
+
 import com.templlo.service.user.entity.User;
 
 public record UserResponseDto(
+	UUID id,
 	String loginId,
 	String email,
 	String userName,
@@ -15,6 +18,7 @@ public record UserResponseDto(
 ) {
 	public static UserResponseDto from(User user) {
 		return new UserResponseDto(
+			user.getId(),
 			user.getLoginId(),
 			user.getEmail(),
 			user.getUserName(),
