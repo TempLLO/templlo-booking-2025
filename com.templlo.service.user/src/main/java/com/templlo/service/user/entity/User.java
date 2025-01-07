@@ -71,19 +71,19 @@ public class User {
 
 	@CreatedBy
 	@Column(updatable = false)
-	private UUID createdBy;
+	private String createdBy;
 
 	@CreatedDate
 	@Column(updatable = false)
 	private LocalDateTime createdAt;
 
 	@LastModifiedBy
-	private UUID updatedBy;
+	private String updatedBy;
 
 	@LastModifiedDate
 	private LocalDateTime updatedAt;
 
-	private UUID deletedBy;
+	private String deletedBy;
 
 	private LocalDateTime deletedAt;
 
