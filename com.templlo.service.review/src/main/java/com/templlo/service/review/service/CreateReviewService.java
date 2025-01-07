@@ -5,8 +5,6 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.templlo.service.review.common.excepion.ErrorCode;
-import com.templlo.service.review.common.excepion.baseException.BaseException;
 import com.templlo.service.review.common.excepion.baseException.DuplicatedReviewException;
 import com.templlo.service.review.common.response.ApiResponse;
 import com.templlo.service.review.dto.CreateReviewRequestDto;
@@ -19,11 +17,11 @@ import com.templlo.service.review.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Slf4j(topic = "Review Service")
+@Slf4j(topic = "Create Review Service")
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class ReviewService {
+public class CreateReviewService {
 
 	private final ReviewRepository reviewRepository;
 	private final UserClient userClient;
@@ -52,4 +50,5 @@ public class ReviewService {
 				throw new DuplicatedReviewException();
 			});
 	}
+
 }

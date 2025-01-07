@@ -1,0 +1,23 @@
+@accessToken = eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3MzYyNjAyNjYsImV4cCI6MTczNjI2MjA2NiwibG9naW5JZCI6InRlc3QxMjM0Iiwicm9sZSI6Ik1FTUJFUiIsInR5cGUiOiJhY2Nlc3MifQ.d4vJ-ywERDb2R_Xfqv-L7sj6hUyfsE1npPrQy4zwFTc
+
+### 리뷰 작성
+POST http://localhost:19091/api/reviews
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+    "programId": "1f4188f9-bca3-40c5-9e6f-b298e0354d30",
+    "content": "재밌었어요. 위치도 좋고, 풍경도 멋있어 힐링하고 왔네요",
+    "rating": 5.0
+}
+
+
+### 본인이 작성한 리뷰 조회
+@page = 0
+@size = 10
+
+GET http://localhost:19091/api/reviews?page={{page}}&size={{size}}
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+
