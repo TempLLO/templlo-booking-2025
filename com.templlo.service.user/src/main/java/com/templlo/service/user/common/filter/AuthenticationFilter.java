@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -31,7 +32,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 
 		if (loginId != null && role != null) {
 			GatewayUserDetailsImpl userDetails = new GatewayUserDetailsImpl(loginId, role);
-			Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null,
+			Authentication authentication = new PreAuthenticatedAuthenticationToken(userDetails, null,
 				userDetails.getAuthorities());
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 
