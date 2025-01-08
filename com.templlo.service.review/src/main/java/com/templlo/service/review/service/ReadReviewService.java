@@ -33,4 +33,8 @@ public class ReadReviewService {
 		return reviewRepository.findByUserId(userId, pageable);
 
 	}
+
+	public Page<Review> getReviews(UUID programId, Pageable pageable) {
+		return reviewRepository.findByProgramId(programId, pageable);
+	}
 }
