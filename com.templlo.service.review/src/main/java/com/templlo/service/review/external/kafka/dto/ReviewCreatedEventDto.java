@@ -1,6 +1,5 @@
 package com.templlo.service.review.external.kafka.dto;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -14,14 +13,11 @@ public record ReviewCreatedEventDto(
 	UUID programId,
 
 	@JsonProperty
-	Double rating,
+	Double rating
 
-	@JsonProperty
-	LocalDateTime issuedAt
 ) {
 
 	public static ReviewCreatedEventDto from(Review review) {
-		return new ReviewCreatedEventDto(review.getUserId(), review.getProgramId(), review.getRating(),
-			LocalDateTime.now());
+		return new ReviewCreatedEventDto(review.getUserId(), review.getProgramId(), review.getRating());
 	}
 }
