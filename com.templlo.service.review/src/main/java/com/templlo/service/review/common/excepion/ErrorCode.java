@@ -21,6 +21,7 @@ public enum ErrorCode implements StatusCode {
 	FORBIDDEN(HttpStatus.FORBIDDEN, "권한이 부족합니다."),
 
 	USER_NOT_FOUND(HttpStatus.NOT_FOUND, "유저 정보를 조회할 수 없습니다. "),
+	REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "리뷰 정보를 조회할 수 없습니다. "),
 
 	// 서버 에러
 	NPE(HttpStatus.INTERNAL_SERVER_ERROR, "NPE"),

@@ -76,4 +76,9 @@ public class Review {
 	public static Review create(UUID programId, UUID loginId, Double rating, String content) {
 		return new Review(programId, loginId, rating, content);
 	}
+
+	public void updateReview(Double rating, String content) {
+		this.rating = rating;
+		this.content = content;
+	}
 }

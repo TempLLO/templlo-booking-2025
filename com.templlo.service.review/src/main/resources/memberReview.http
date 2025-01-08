@@ -1,4 +1,4 @@
-@accessToken = eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3MzYzMDE2MzYsImV4cCI6MTczNjMwMzQzNiwibG9naW5JZCI6InRlc3QxMjM0Iiwicm9sZSI6Ik1FTUJFUiIsInR5cGUiOiJhY2Nlc3MifQ.G9g1Ru8WQux-pUsNOKvxhATaSBpRdl1gvXd9Wahv_IQ
+@accessToken = eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3MzYzMTI1NTksImV4cCI6MTczNjMxNDM1OSwibG9naW5JZCI6InRlc3QxMjM0Iiwicm9sZSI6Ik1FTUJFUiIsInR5cGUiOiJhY2Nlc3MifQ.aJOUAtXED-XYdoG24eADqK31nnjV0-k_m2JGpo8oMZI
 @page = 0
 @size = 10
 @sortBy = createdAt
@@ -27,4 +27,14 @@ GET http://localhost:19091/api/reviews?programId={{programId}}&page={{page}}&siz
 Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
+### 작성한 리뷰 수정
+@reviewId = 3d0cd467-2a3f-4687-a720-3e5d6f7da1eb
 
+PATCH http://localhost:19091/api/reviews/{{reviewId}}
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "content": "ㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠ재밌었어요. 위치도 좋고, 풍경도 멋있어 힐링하고 왔네요",
+  "rating": 1.0
+}

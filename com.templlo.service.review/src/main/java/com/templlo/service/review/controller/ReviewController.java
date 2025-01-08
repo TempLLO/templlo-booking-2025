@@ -7,6 +7,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,9 +22,11 @@ import com.templlo.service.review.common.security.UserDetailsImpl;
 import com.templlo.service.review.common.util.PagingUtil;
 import com.templlo.service.review.dto.CreateReviewRequestDto;
 import com.templlo.service.review.dto.ReviewResponseDto;
+import com.templlo.service.review.dto.UpdateReviewRequestDto;
 import com.templlo.service.review.entity.Review;
 import com.templlo.service.review.service.CreateReviewService;
 import com.templlo.service.review.service.ReadReviewService;
+import com.templlo.service.review.service.UpdateReviewService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +38,7 @@ public class ReviewController {
 
 	private final CreateReviewService createReviewService;
 	private final ReadReviewService readReviewService;
+	private final UpdateReviewService updateReviewService;
 
 	@PreAuthorize("hasAuthority('MEMBER')")
 	@PostMapping
@@ -71,5 +76,15 @@ public class ReviewController {
 		Pageable pageable = PagingUtil.of(page, size, sortBy, isAsc);
 		Page<Review> reviews = readReviewService.getReviews(programId, pageable);
 		return ApiResponse.of(BasicStatusCode.OK, ReviewResponseDto.pageOf(reviews));
+	}
+
+	@PreAuthorize("hasAuthority('MEMBER')")
+	@PatchMapping("/{reviewId}")
+	public ApiResponse<PageResponse<ReviewResponseDto>> updateReview(
+		@PathVariable(name = "reviewId") UUID reviewId,
+		@Valid @RequestBody UpdateReviewRequestDto request) {
+
+		updateReviewService.updateReview(reviewId, request);
+		return ApiResponse.of(BasicStatusCode.OK);
 	}
 }
