@@ -1,4 +1,4 @@
-package com.templlo.service.review.external.feignClient;
+package com.templlo.service.review.external.feignClient.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -6,6 +6,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.templlo.service.review.common.security.UserDetailsImpl;
+import com.templlo.service.review.external.feignClient.CustomErrorDecoder;
 
 import feign.Logger;
 import feign.RequestInterceptor;

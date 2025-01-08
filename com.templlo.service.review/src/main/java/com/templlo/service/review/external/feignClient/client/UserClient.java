@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import com.templlo.service.review.common.response.ApiResponse;
-import com.templlo.service.review.external.feignClient.FeignConfiguration;
+import com.templlo.service.review.external.feignClient.config.FeignConfiguration;
 import com.templlo.service.review.external.feignClient.dto.UserData;
 
 @FeignClient(
