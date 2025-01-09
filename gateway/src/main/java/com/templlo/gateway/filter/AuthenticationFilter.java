@@ -1,14 +1,21 @@
 package com.templlo.gateway.filter;
 
+import java.util.Map;
+
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
+import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.server.ServerWebExchange;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.templlo.gateway.util.JwtUtil;
 import com.templlo.gateway.util.JwtValidType;
 
@@ -17,7 +24,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
-@Slf4j(topic = " == Gateway: Authentication Filter == ")
+@Slf4j(topic = " Gateway: Authentication Filter ")
 @Component
 @RequiredArgsConstructor
 public class AuthenticationFilter implements GlobalFilter {
@@ -39,14 +46,12 @@ public class AuthenticationFilter implements GlobalFilter {
 		String accessToken = getAccessTokenFromHeader(exchange);
 		JwtValidType resultJwtType = jwtUtil.validateToken(accessToken);
 		if (resultJwtType != JwtValidType.VALID_TOKEN) {
-			log.error("Invalid Token Value : " + resultJwtType.getDescription());
-			exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+			sendErrorResponse(exchange, resultJwtType);
 			return exchange.getResponse().setComplete();
 		}
 
-		if(!jwtUtil.isAccessToken(accessToken)) {
-			log.error("Invalid Token Type");
-			exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+		if (!jwtUtil.isAccessToken(accessToken)) {
+			sendErrorResponse(exchange, JwtValidType.INVALID_TOKEN_TYPE);
 			return exchange.getResponse().setComplete();
 		}
 
@@ -69,6 +74,49 @@ public class AuthenticationFilter implements GlobalFilter {
 		});
 
 		return chain.filter(exchange);
+	}
+
+	private void sendErrorResponse(ServerWebExchange exchange, JwtValidType resultJwtType) {
+		ServerHttpResponse response = exchange.getResponse();
+		String msg;
+
+		response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
+
+		switch (resultJwtType) {
+			case INVALID_SIGNATURE:
+				msg = JwtValidType.INVALID_SIGNATURE.getDescription();
+				response.setStatusCode(HttpStatus.UNAUTHORIZED);
+				break;
+			case EXPIRED_TOKEN:
+				msg = JwtValidType.EXPIRED_TOKEN.getDescription();
+				response.setStatusCode(HttpStatus.FORBIDDEN);
+				break;
+			case UNSUPPORTED_TOKEN:
+				msg = JwtValidType.UNSUPPORTED_TOKEN.getDescription();
+				response.setStatusCode(HttpStatus.UNAUTHORIZED);
+				break;
+			case EMPTY_TOKEN:
+				msg = JwtValidType.EMPTY_TOKEN.getDescription();
+				response.setStatusCode(HttpStatus.UNAUTHORIZED);
+				break;
+			case INVALID_TOKEN_TYPE:
+				msg = JwtValidType.INVALID_TOKEN_TYPE.getDescription();
+				response.setStatusCode(HttpStatus.UNAUTHORIZED);
+				break;
+			default:
+				msg = JwtValidType.INVALID_TOKEN.getDescription();
+				response.setStatusCode(HttpStatus.UNAUTHORIZED);
+		}
+
+		Map<String, Object> errorResponse = Map.of("error", msg);
+
+		try {
+			byte[] responseBody = new ObjectMapper().writeValueAsBytes(errorResponse);
+			DataBuffer buffer = response.bufferFactory().wrap(responseBody);
+			response.writeWith(Mono.just(buffer)).subscribe();
+		} catch (JsonProcessingException e) {
+			log.error("Error writing response", e);
+		}
 	}
 
 	private String getAccessTokenFromHeader(ServerWebExchange exchange) {

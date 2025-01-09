@@ -12,7 +12,9 @@ public enum JwtValidType {
 	INVALID_SIGNATURE("유효하지 않는 JWT 서명 입니다."),
 	EXPIRED_TOKEN("만료된 JWT token 입니다."),
 	UNSUPPORTED_TOKEN("지원되지 않는 JWT 토큰 입니다."),
-	EMPTY_TOKEN("JWT 토큰이 없습니다. ");
+	EMPTY_TOKEN("JWT 토큰이 없습니다. "),
+
+	INVALID_TOKEN_TYPE("accessToken으로 요청해주세요. ");
 
 	private final String description;
 }
