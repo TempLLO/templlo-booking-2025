@@ -5,7 +5,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.templlo.service.review.common.excepion.baseException.ReviewNotFoundException;
+import com.templlo.service.review.common.exception.baseException.ReviewNotFoundException;
 import com.templlo.service.review.dto.UpdateReviewRequestDto;
 import com.templlo.service.review.entity.Review;
 import com.templlo.service.review.repository.ReviewRepository;

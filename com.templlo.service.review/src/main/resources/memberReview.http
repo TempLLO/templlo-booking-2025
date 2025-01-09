@@ -1,4 +1,4 @@
-@accessToken = eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3MzYzMTI1NTksImV4cCI6MTczNjMxNDM1OSwibG9naW5JZCI6InRlc3QxMjM0Iiwicm9sZSI6Ik1FTUJFUiIsInR5cGUiOiJhY2Nlc3MifQ.aJOUAtXED-XYdoG24eADqK31nnjV0-k_m2JGpo8oMZI
+@accessToken = eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3MzY0MjQyOTYsImV4cCI6MTczNjQyNjA5NiwibG9naW5JZCI6InRlc3QxMjM0Iiwicm9sZSI6Ik1FTUJFUiIsInR5cGUiOiJhY2Nlc3MifQ.qr5rRxqf5e_Q0S3AYHdzAFY1unsvJPrBB079gOUYOFc
 @page = 0
 @size = 10
 @sortBy = createdAt
@@ -11,7 +11,7 @@ Content-Type: application/json
 {
     "programId": "1f4188f9-bca3-40c5-9e6f-b298e0354d32",
     "content": "재밌었어요. 위치도 좋고, 풍경도 멋있어 힐링하고 왔네요",
-    "rating": 5.0
+    "rating": 1.0
 }
 
 ### 본인이 작성한 리뷰 조회

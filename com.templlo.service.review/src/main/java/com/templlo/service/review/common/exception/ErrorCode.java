@@ -1,4 +1,4 @@
-package com.templlo.service.review.common.excepion;
+package com.templlo.service.review.common.exception;
 
 import org.springframework.http.HttpStatus;
 

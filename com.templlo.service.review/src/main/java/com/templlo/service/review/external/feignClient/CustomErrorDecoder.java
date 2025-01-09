@@ -2,11 +2,11 @@ package com.templlo.service.review.external.feignClient;
 
 import org.springframework.stereotype.Component;
 
-import com.templlo.service.review.common.excepion.baseException.CustomBadRequestException;
-import com.templlo.service.review.common.excepion.baseException.CustomFeignException;
-import com.templlo.service.review.common.excepion.baseException.CustomForbiddenException;
-import com.templlo.service.review.common.excepion.baseException.UnauthorizedException;
-import com.templlo.service.review.common.excepion.baseException.UserNotFoundException;
+import com.templlo.service.review.common.exception.baseException.CustomBadRequestException;
+import com.templlo.service.review.common.exception.baseException.CustomFeignException;
+import com.templlo.service.review.common.exception.baseException.CustomForbiddenException;
+import com.templlo.service.review.common.exception.baseException.UnauthorizedException;
+import com.templlo.service.review.common.exception.baseException.UserNotFoundException;
 
 import feign.Response;
 import feign.codec.ErrorDecoder;

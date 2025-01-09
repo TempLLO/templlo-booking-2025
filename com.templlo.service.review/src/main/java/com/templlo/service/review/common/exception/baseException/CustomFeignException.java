@@ -1,6 +1,6 @@
-package com.templlo.service.review.common.excepion.baseException;
+package com.templlo.service.review.common.exception.baseException;
 
-import com.templlo.service.review.common.excepion.ErrorCode;
+import com.templlo.service.review.common.exception.ErrorCode;
 
 import lombok.Getter;
 

@@ -1,11 +1,11 @@
-package com.templlo.service.review.common.excepion;
+package com.templlo.service.review.common.exception;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import com.templlo.service.review.common.excepion.baseException.BaseException;
+import com.templlo.service.review.common.exception.baseException.BaseException;
 import com.templlo.service.review.common.response.ApiResponse;
 import com.templlo.service.review.common.response.StatusCode;
 

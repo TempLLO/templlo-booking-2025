@@ -5,7 +5,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.templlo.service.review.common.excepion.baseException.DuplicatedReviewException;
+import com.templlo.service.review.common.exception.baseException.DuplicatedReviewException;
 import com.templlo.service.review.common.response.ApiResponse;
 import com.templlo.service.review.dto.CreateReviewRequestDto;
 import com.templlo.service.review.entity.Review;
