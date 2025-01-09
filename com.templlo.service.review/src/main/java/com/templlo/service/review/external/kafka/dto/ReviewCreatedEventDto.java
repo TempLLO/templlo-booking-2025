@@ -7,7 +7,7 @@ import com.templlo.service.review.entity.Review;
 
 public record ReviewCreatedEventDto(
 	@JsonProperty
-	UUID userId,
+	String loginId,
 
 	@JsonProperty
 	UUID programId,
@@ -17,7 +17,7 @@ public record ReviewCreatedEventDto(
 
 ) {
 
-	public static ReviewCreatedEventDto from(Review review) {
-		return new ReviewCreatedEventDto(review.getUserId(), review.getProgramId(), review.getRating());
+	public static ReviewCreatedEventDto of(String loginId, Review review) {
+		return new ReviewCreatedEventDto(loginId, review.getProgramId(), review.getRating());
 	}
 }

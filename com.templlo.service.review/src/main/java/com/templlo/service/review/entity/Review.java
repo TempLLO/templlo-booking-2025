@@ -32,6 +32,10 @@ public class Review {
 	@GeneratedValue(strategy = GenerationType.UUID)
 	private UUID id;
 
+	// TODO 추가 및 로직 수정
+	// @Column(nullable = false)
+	// private UUID reservationId;
+
 	@Column(nullable = false)
 	private UUID programId;
 

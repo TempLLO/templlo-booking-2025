@@ -20,7 +20,7 @@ spring:
   kafka:
     bootstrap-servers: localhost:9092
     topics:
-      review-created: reviewCreated
+      review-created: review-created
 
 eureka:
   client:
