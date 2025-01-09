@@ -1,4 +1,4 @@
-package com.templlo.service.review.external.kafka.dto;
+package com.templlo.service.review.external.kafka.producer.dto;
 
 import java.util.UUID;
 

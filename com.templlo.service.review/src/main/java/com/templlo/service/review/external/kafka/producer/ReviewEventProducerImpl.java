@@ -1,27 +1,33 @@
 package com.templlo.service.review.external.kafka.producer;
 
-import org.springframework.beans.factory.annotation.Value;
+import static com.templlo.service.review.external.kafka.topic.ProducerTopic.*;
+
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
-import com.templlo.service.review.external.kafka.dto.ReviewCreatedEventDto;
+import com.templlo.service.review.external.kafka.producer.dto.ReviewCreatedEventDto;
+import com.templlo.service.review.external.kafka.producer.dto.ReviewUpdatedEventDto;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Component
-@Slf4j(topic = "=== Review Kafka Producer ====")
+@Slf4j(topic = "Review Event Producer ")
 @RequiredArgsConstructor
 public class ReviewEventProducerImpl implements ReviewEventProducer {
 
 	private final KafkaTemplate<String, Object> kafkaTemplate;
-
-	@Value("${spring.kafka.topics.review-created}")
-	private String topicReviewCreated;
+	private final String EVENT_LOG = " *** [Topic] %s, [Message] %s";
 
 	@Override
 	public void publishReviewCreated(ReviewCreatedEventDto eventDto) {
-		log.info("sending eventDto = {} to topic = {} ", eventDto, topicReviewCreated);
-		kafkaTemplate.send(topicReviewCreated, eventDto);
+		kafkaTemplate.send(REVIEW_CREATED.toString(), eventDto);
+		log.info(String.format(EVENT_LOG, REVIEW_CREATED, eventDto));
+	}
+
+	@Override
+	public void publishReviewUpdated(ReviewUpdatedEventDto eventDto) {
+		kafkaTemplate.send(REVIEW_UPDATED.toString(), eventDto);
+		log.info(String.format(EVENT_LOG, REVIEW_UPDATED, eventDto));
 	}
 }

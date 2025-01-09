@@ -1,4 +1,4 @@
-@accessToken = eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3MzY0MjQyOTYsImV4cCI6MTczNjQyNjA5NiwibG9naW5JZCI6InRlc3QxMjM0Iiwicm9sZSI6Ik1FTUJFUiIsInR5cGUiOiJhY2Nlc3MifQ.qr5rRxqf5e_Q0S3AYHdzAFY1unsvJPrBB079gOUYOFc
+@accessToken = eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3MzY0Mjg4MDUsImV4cCI6MTczNjQzMDYwNSwibG9naW5JZCI6InRlc3QxMjM0Iiwicm9sZSI6Ik1FTUJFUiIsInR5cGUiOiJhY2Nlc3MifQ.fKjx67J8tHEdEjDM_boq6Qd7L5FxuKePD0by6WQy3ts
 @page = 0
 @size = 10
 @sortBy = createdAt
@@ -28,7 +28,7 @@ Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
 ### 작성한 리뷰 수정
-@reviewId = 3d0cd467-2a3f-4687-a720-3e5d6f7da1eb
+@reviewId = 9b065250-c5dd-44fb-b075-42764662f1fd
 
 PATCH http://localhost:19091/api/reviews/{{reviewId}}
 Authorization: Bearer {{accessToken}}

@@ -12,7 +12,7 @@ import com.templlo.service.review.entity.Review;
 import com.templlo.service.review.external.feignClient.client.ReservationClient;
 import com.templlo.service.review.external.feignClient.client.UserClient;
 import com.templlo.service.review.external.feignClient.dto.UserData;
-import com.templlo.service.review.external.kafka.dto.ReviewCreatedEventDto;
+import com.templlo.service.review.external.kafka.producer.dto.ReviewCreatedEventDto;
 import com.templlo.service.review.external.kafka.producer.ReviewEventProducer;
 import com.templlo.service.review.repository.ReviewRepository;
 
@@ -44,7 +44,7 @@ public class CreateReviewService {
 		Review review = Review.create(request.programId(), userId, request.rating(), request.content());
 		reviewRepository.save(review);
 
-		// TODO 트랜잭션이 순차적으로 진행되는건지 확인이 필요(트러블슈팅 사항 : DB 트랜잭션이 종료 되기전에 이벤트가 발행된다면?)
+		// TODO 트랜잭션이 순차적으로 진행되는건지 확인이 필요(트러블슈팅 사항 : DB 트랜잭션이 종료 되기전에 이벤트가 발행된다면?) #1
 		ReviewCreatedEventDto eventDto = ReviewCreatedEventDto.of(loginId, review);
 		eventProducer.publishReviewCreated(eventDto);
 	}

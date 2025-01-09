@@ -19,8 +19,6 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
   kafka:
     bootstrap-servers: localhost:9092
-    topics:
-      review-created: review-created
 
 eureka:
   client:

@@ -8,8 +8,6 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
   kafka:
     bootstrap-servers: mock:9092
-    topics:
-      review-created: test-topic
 
 eureka:
   client:
