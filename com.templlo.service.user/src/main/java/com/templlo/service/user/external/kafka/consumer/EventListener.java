@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.templlo.service.user.external.kafka.consumer.dto.ReviewCreatedEventDto;
+import com.templlo.service.user.external.kafka.topic.ConsumerTopic;
 import com.templlo.service.user.service.UpdateUserService;
 
 import lombok.RequiredArgsConstructor;
@@ -19,9 +20,9 @@ public class EventListener {
 	private final ObjectMapper objectMapper;
 	private final UpdateUserService updateUserService;
 
-	@KafkaListener(topics = "review-created", groupId = "user-consumer-group-review", containerFactory = "listenerFactory")
+	@KafkaListener(topics = ConsumerTopic.REVIEW_CREATED, groupId = "user-consumer-group-review", containerFactory = "listenerFactory")
 	public void handleReviewCreated(String message) {
-		log.info("Consumed Message From Topic : {} ", "review-created");
+		log.info("Consumed Message From Topic : {} ", ConsumerTopic.REVIEW_CREATED);
 		try {
 			// Todo serializer class 따로 구현할지
 			ReviewCreatedEventDto eventDto = objectMapper.readValue(message, ReviewCreatedEventDto.class);

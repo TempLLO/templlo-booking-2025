@@ -7,9 +7,7 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
   kafka:
-    bootstrap-servers: mock:9092
-    topics:
-      review-created: test-topic
+    bootstrap-servers: localhost:9092
 
 jwt:
   secret: templlo123456789templlo123456789templlo123456789templlo123456789templlo123456789templlo123456789
