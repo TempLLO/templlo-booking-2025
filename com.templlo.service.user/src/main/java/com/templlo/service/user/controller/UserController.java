@@ -13,7 +13,8 @@ import com.templlo.service.user.common.response.BasicStatusCode;
 import com.templlo.service.user.common.security.GatewayUserDetailsImpl;
 import com.templlo.service.user.dto.SignUpRequestDto;
 import com.templlo.service.user.dto.UserResponseDto;
-import com.templlo.service.user.service.UserService;
+import com.templlo.service.user.service.CreateUserService;
+import com.templlo.service.user.service.ReadUserService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,11 +24,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserController {
 
-	private final UserService userService;
+	private final CreateUserService createUserService;
+	private final ReadUserService readUserService;
 
 	@PostMapping("/sign-up")
 	public ApiResponse<Void> join(@Valid @RequestBody SignUpRequestDto request) {
-		userService.join(request);
+		createUserService.join(request);
 		return ApiResponse.basicSuccessResponse();
 	}
 
@@ -35,7 +37,8 @@ public class UserController {
 	public ApiResponse<UserResponseDto> getUser(@PathVariable(name = "loginId") String loginId,
 		@AuthenticationPrincipal GatewayUserDetailsImpl userDetails) {
 
-		UserResponseDto responseDto = userService.getUser(loginId, userDetails.getLoginId(), userDetails.getUserRole());
+		UserResponseDto responseDto = readUserService.getUser(loginId, userDetails.getLoginId(), userDetails.getUserRole());
 		return ApiResponse.of(BasicStatusCode.OK, responseDto);
 	}
+
 }
