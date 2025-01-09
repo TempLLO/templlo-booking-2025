@@ -118,4 +118,9 @@ public class User {
 			.phone(phone)
 			.build();
 	}
+
+	public boolean increaseAndCheckReviewCount() {
+		this.reviewCount++;
+		return reviewCount % 5 == 0;
+	}
 }
