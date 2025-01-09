@@ -6,6 +6,14 @@ spring:
     driver-class-name: org.h2.Driver
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
+  kafka:
+    bootstrap-servers: mock:9092
+    topics:
+      review-created: test-topic
 
 jwt:
   secret: templlo123456789templlo123456789templlo123456789templlo123456789templlo123456789templlo123456789
+
+eureka:
+  client:
+    enabled: false
