@@ -1,4 +1,4 @@
-package com.templlo.service.user.common.excepion;
+package com.templlo.service.user.common.exception;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

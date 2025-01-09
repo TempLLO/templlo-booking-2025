@@ -3,7 +3,7 @@ package com.templlo.service.user.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.templlo.service.user.common.excepion.BaseException;
+import com.templlo.service.user.common.exception.BaseException;
 import com.templlo.service.user.common.response.BasicStatusCode;
 import com.templlo.service.user.entity.User;
 import com.templlo.service.user.external.kafka.consumer.dto.ReviewCreatedEventDto;

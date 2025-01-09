@@ -7,7 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.templlo.service.user.common.excepion.BaseException;
+import com.templlo.service.user.common.exception.BaseException;
 import com.templlo.service.user.common.jwt.JwtTokenProvider;
 import com.templlo.service.user.common.response.BasicStatusCode;
 import com.templlo.service.user.common.security.UserDetailsImpl;

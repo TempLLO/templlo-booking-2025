@@ -1,4 +1,4 @@
-package com.templlo.service.user.common.excepion;
+package com.templlo.service.user.common.exception;
 
 import com.templlo.service.user.common.response.StatusCode;
 
