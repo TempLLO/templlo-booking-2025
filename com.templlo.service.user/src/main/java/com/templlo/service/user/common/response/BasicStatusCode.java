@@ -11,6 +11,7 @@ public enum BasicStatusCode implements StatusCode {
 
 	// 200
 	OK(HttpStatus.OK, "API 요청에 성공했습니다"),
+	REISSUE_TOKEN(HttpStatus.CREATED, "토큰이 재발급되었습니다. "),
 
 	// 클라이언트 에러
 	BAD_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),

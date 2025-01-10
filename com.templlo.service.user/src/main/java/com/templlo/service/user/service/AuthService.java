@@ -14,6 +14,7 @@ import com.templlo.service.user.common.security.UserDetailsImpl;
 import com.templlo.service.user.dto.LoginRequestDto;
 import com.templlo.service.user.dto.TokenDto;
 import com.templlo.service.user.entity.User;
+import com.templlo.service.user.entity.enums.UserRole;
 
 import lombok.RequiredArgsConstructor;
 
@@ -42,5 +43,12 @@ public class AuthService {
 			throw new BaseException(BasicStatusCode.INVALID_USER);
 		}
 
+	}
+
+	public TokenDto reissue(String loginId, String role) {
+		String accessToken = jwtTokenProvider.createAccessToken(loginId, UserRole.fromString(role));
+		String refreshToken = jwtTokenProvider.createRefreshToken(loginId, UserRole.fromString(role));
+
+		return new TokenDto(accessToken, refreshToken);
 	}
 }

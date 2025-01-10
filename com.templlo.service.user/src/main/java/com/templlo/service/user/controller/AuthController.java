@@ -2,6 +2,7 @@ package com.templlo.service.user.controller;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,4 +27,13 @@ public class AuthController {
 		TokenDto tokenDto = authService.login(request);
 		return ApiResponse.of(BasicStatusCode.OK, tokenDto);
 	}
+
+	@PostMapping("/reissue")
+	public ApiResponse<TokenDto> reissue(
+		@RequestHeader("X-Login-Id") String loginId,
+		@RequestHeader("X-User-Role") String role) {
+		TokenDto tokenDto = authService.reissue(loginId, role);
+		return ApiResponse.of(BasicStatusCode.REISSUE_TOKEN, tokenDto);
+	}
+
 }

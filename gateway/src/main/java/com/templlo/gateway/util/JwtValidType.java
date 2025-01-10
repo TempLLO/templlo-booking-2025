@@ -14,7 +14,7 @@ public enum JwtValidType {
 	UNSUPPORTED_TOKEN("지원되지 않는 JWT 토큰 입니다."),
 	EMPTY_TOKEN("JWT 토큰이 없습니다. "),
 
-	INVALID_TOKEN_TYPE("accessToken으로 요청해주세요. ");
+	INVALID_TOKEN_TYPE("요청에 적절한 토큰이 아닙니다. ");
 
 	private final String description;
 }

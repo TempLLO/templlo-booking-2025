@@ -1,16 +1,19 @@
 package com.templlo.gateway.filter;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.http.HttpCookie;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
+import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.server.ServerWebExchange;
 
@@ -32,6 +35,7 @@ public class AuthenticationFilter implements GlobalFilter {
 	private final static String BEARER_PREFIX = "Bearer ";
 	private static final String CLAIM_LOGIN_ID = "loginId";
 	private static final String CLAIM_USER_ROLE = "role";
+	private static final String REFRESH_TOKEN = "refresh";
 
 	private final JwtUtil jwtUtil;
 
@@ -39,30 +43,74 @@ public class AuthenticationFilter implements GlobalFilter {
 	public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
 		String path = exchange.getRequest().getURI().getPath();
 		log.info("Request path : " + path);
+
 		if (path.equals("/api/auth/login") || path.equals("/api/users/sign-up")) {
 			return chain.filter(exchange);
 		}
 
-		String accessToken = getAccessTokenFromHeader(exchange);
-		JwtValidType resultJwtType = jwtUtil.validateToken(accessToken);
+		return path.equals("/api/auth/reissue")
+			? handleReissueRequest(exchange, chain)
+			: handleProtectedRequest(exchange, chain);
+	}
+
+	private Mono<Void> handleReissueRequest(ServerWebExchange exchange, GatewayFilterChain chain) {
+		String refreshToken = getRefreshTokenFromCookie(exchange.getRequest());
+
+		if (refreshToken == null) {
+			return handleInvalidToken(exchange, JwtValidType.EMPTY_TOKEN);
+		}
+
+		JwtValidType resultJwtType = jwtUtil.validateToken(refreshToken);
 		if (resultJwtType != JwtValidType.VALID_TOKEN) {
-			sendErrorResponse(exchange, resultJwtType);
-			return exchange.getResponse().setComplete();
+			return handleInvalidToken(exchange, resultJwtType);
+		}
+
+		if (!jwtUtil.isRefreshToken(refreshToken)) {
+			return handleInvalidToken(exchange, JwtValidType.INVALID_TOKEN_TYPE);
+		}
+
+		return processValidToken(exchange, chain, refreshToken);
+	}
+
+	private Mono<Void> handleProtectedRequest(ServerWebExchange exchange, GatewayFilterChain chain) {
+		String accessToken = getAccessTokenFromHeader(exchange);
+
+		if (accessToken == null) {
+			return handleInvalidToken(exchange, JwtValidType.EMPTY_TOKEN);
+		}
+
+		JwtValidType validationType = jwtUtil.validateToken(accessToken);
+		if (validationType != JwtValidType.VALID_TOKEN) {
+			return handleInvalidToken(exchange, validationType);
 		}
 
 		if (!jwtUtil.isAccessToken(accessToken)) {
-			sendErrorResponse(exchange, JwtValidType.INVALID_TOKEN_TYPE);
-			return exchange.getResponse().setComplete();
+			return handleInvalidToken(exchange, JwtValidType.INVALID_TOKEN_TYPE);
 		}
 
-		Claims claims = jwtUtil.getClaims(accessToken);
+		return processValidToken(exchange, chain, accessToken);
+	}
+
+	private String getRefreshTokenFromCookie(ServerHttpRequest request) {
+		MultiValueMap<String, HttpCookie> cookies = request.getCookies();
+		if (cookies.containsKey(REFRESH_TOKEN)) {
+			List<HttpCookie> refreshTokenCookies = cookies.get(REFRESH_TOKEN);
+			if (!refreshTokenCookies.isEmpty()) {
+				return refreshTokenCookies.get(0).getValue();
+			}
+		}
+		return null;
+	}
+
+	private Mono<Void> processValidToken(ServerWebExchange exchange, GatewayFilterChain chain, String token) {
+		Claims claims = jwtUtil.getClaims(token);
 		String loginId = String.valueOf(claims.get(CLAIM_LOGIN_ID));
 		String role = String.valueOf(claims.get(CLAIM_USER_ROLE));
 
 		ServerHttpRequest modifiedRequest = exchange.getRequest().mutate()
 			.header("X-Login-Id", loginId)
 			.header("X-User-Role", role)
-			.header("X-Token", accessToken)
+			.header("X-Token", token)
 			.build();
 
 		log.info("Gateway User loginId : {} , role : {}", loginId, role);
@@ -74,6 +122,11 @@ public class AuthenticationFilter implements GlobalFilter {
 		});
 
 		return chain.filter(exchange);
+	}
+
+	private Mono<Void> handleInvalidToken(ServerWebExchange exchange, JwtValidType validationType) {
+		sendErrorResponse(exchange, validationType);
+		return exchange.getResponse().setComplete();
 	}
 
 	private void sendErrorResponse(ServerWebExchange exchange, JwtValidType resultJwtType) {
