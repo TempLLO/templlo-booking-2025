@@ -5,7 +5,8 @@
 @tempProgramId1 = 2560006b-0962-4950-8ea7-c6babddffce3
 @tempProgramId2 = 2560006b-0962-4950-8ea7-c6babddffce3
 
-@accessToken = eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3MzY1MDEyMTEsImV4cCI6MTczNjUwMzAxMSwibG9naW5JZCI6InRlc3QxMjM0Iiwicm9sZSI6Ik1FTUJFUiIsInR5cGUiOiJhY2Nlc3MifQ.O83AJZG2qlUsUBowQ1-OZAjKdMJf6NM9Mg4gSSNrdz0
+@accessToken = eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3MzY1ODI1ODIsImV4cCI6MTczNjU4NDM4MiwibG9naW5JZCI6InRlc3QxMjM0Iiwicm9sZSI6Ik1FTUJFUiIsInR5cGUiOiJhY2Nlc3MifQ.HT-KZcMMyeAsqYpJ9jvDqk18CFIbAsIsXkOEfUw0SzI
+@accessTokenTemple = eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3MzY1ODMzMDgsImV4cCI6MTczNjU4NTEwOCwibG9naW5JZCI6ImFkbWluMTAwMCIsInJvbGUiOiJURU1QTEVfQURNSU4iLCJ0eXBlIjoiYWNjZXNzIn0.-4k5vrjKec7RDZADPAwJ-_dGk1m9Ze8mM5hqv-zq5Vw
 @promotionId = 20455a70-7c75-46c0-a87d-65baeb19b20e
 
 
@@ -17,13 +18,20 @@ X-Token: token value something
 
 
 ### getReservationsByUser
-GET http://localhost:19091/api/reservations/users/{{userId}}/reservations?page=-1&size=20&sort=created_at
+GET http://localhost:19091/api/users/{{userId}}/reservations?page=-1&size=20&sort=created_at
 Authorization: Bearer {{accessToken}}
 
 
 
 ### getReservationsByTemple
-GET http://localhost:19091/api/reservations/temples/2560006b-0962-4950-8ea7-c6babddffce0/reservations?page=0&size=&
+GET http://localhost:19091/api/temples/2560006b-0962-4950-8ea7-c6babddffce0/reservations?page=0&size=&
     sort=updatedAt&
     tempProgramId1={{tempProgramId1}}&tempProgramId2={{tempProgramId2}}
-Authorization: Bearer {{accessToken}}
+Authorization: Bearer {{accessTokenTemple}}
+
+### getReservationsByTemple : 19040
+GET http://localhost:19040/api/temples/2560006b-0962-4950-8ea7-c6babddffce0/reservations?page=0&size=&
+    sort=updatedAt
+X-Login-Id: tempUserId77
+X-User-Role: TEMPLE_ADMIN
+X-Token: token value something

@@ -1,4 +1,5 @@
-@accessToken = eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3MzY1MDEyMTEsImV4cCI6MTczNjUwMzAxMSwibG9naW5JZCI6InRlc3QxMjM0Iiwicm9sZSI6Ik1FTUJFUiIsInR5cGUiOiJhY2Nlc3MifQ.O83AJZG2qlUsUBowQ1-OZAjKdMJf6NM9Mg4gSSNrdz0
+@accessToken = eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3MzY1ODI1ODIsImV4cCI6MTczNjU4NDM4MiwibG9naW5JZCI6InRlc3QxMjM0Iiwicm9sZSI6Ik1FTUJFUiIsInR5cGUiOiJhY2Nlc3MifQ.HT-KZcMMyeAsqYpJ9jvDqk18CFIbAsIsXkOEfUw0SzI
+@accessTokenTemple = eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3MzY1ODMzMDgsImV4cCI6MTczNjU4NTEwOCwibG9naW5JZCI6ImFkbWluMTAwMCIsInJvbGUiOiJURU1QTEVfQURNSU4iLCJ0eXBlIjoiYWNjZXNzIn0.-4k5vrjKec7RDZADPAwJ-_dGk1m9Ze8mM5hqv-zq5Vw
 @promotionId = 20455a70-7c75-46c0-a87d-65baeb19b20e
 
 # CreateReservation controller api list
@@ -15,7 +16,7 @@ Authorization: Bearer {{accessToken}}
   "programDate": "2025-01-01",
   "couponUsedType": "USED",
   "couponId": "b7e670f9-ae9e-41ae-8f48-9750e481813e",
-  "name": "삐까2",
+  "name": "삐까",
   "phoneNumber": "010-333-7777",
   "gender": "FEMALE",
   "paymentType": "NO_PAY",

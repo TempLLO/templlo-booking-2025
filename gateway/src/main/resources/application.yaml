@@ -9,10 +9,17 @@ spring:
   cloud:
     gateway:
       routes:
+        - id: reservation-service-detail
+          uri: lb://reservation-service
+          predicates:
+            - Path=/api/users/*/reservations, /api/temples/*/reservations
+            - Method=GET
+          order: 1
         - id: user-service
           uri: lb://user-service
           predicates:
             - Path=/api/auth/**, /api/users/**
+          order: 10
         - id: review-service
           uri: lb://review-service
           predicates:
@@ -21,6 +28,7 @@ spring:
           uri: lb://temple-service
           predicates:
             - Path=/api/temples/**
+          order: 10
         - id: program-service
           uri: lb://program-service
           predicates:
