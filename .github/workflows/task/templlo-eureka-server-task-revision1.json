@@ -1,0 +1,64 @@
+{
+    "taskDefinitionArn": "arn:aws:ecs:ap-northeast-2:354891846810:task-definition/templlo-eureka-server-task:1",
+    "containerDefinitions": [
+        {
+            "name": "templlo-eureka-server-container",
+            "image": "354891846810.dkr.ecr.ap-northeast-2.amazonaws.com/templlo-2025-g1/eureka-server",
+            "cpu": 0,
+            "portMappings": [
+                {
+                    "name": "templlo-eureka-server-container-19090-tcp",
+                    "containerPort": 19090,
+                    "hostPort": 19090,
+                    "protocol": "tcp",
+                    "appProtocol": "http"
+                }
+            ],
+            "essential": true,
+            "environment": [],
+            "environmentFiles": [],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "ulimits": [],
+            "systemControls": []
+        }
+    ],
+    "family": "templlo-eureka-server-task",
+    "executionRoleArn": "arn:aws:iam::354891846810:role/ecsTaskExecutionRole",
+    "networkMode": "awsvpc",
+    "revision": 1,
+    "volumes": [],
+    "status": "ACTIVE",
+    "requiresAttributes": [
+        {
+            "name": "com.amazonaws.ecs.capability.ecr-auth"
+        },
+        {
+            "name": "ecs.capability.execution-role-ecr-pull"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
+        },
+        {
+            "name": "ecs.capability.task-eni"
+        }
+    ],
+    "placementConstraints": [],
+    "compatibilities": [
+        "EC2",
+        "FARGATE"
+    ],
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "1024",
+    "memory": "3072",
+    "runtimePlatform": {
+        "cpuArchitecture": "X86_64",
+        "operatingSystemFamily": "LINUX"
+    },
+    "registeredAt": "2025-01-12T12:32:08.459Z",
+    "registeredBy": "arn:aws:iam::354891846810:user/templlo-server-user",
+    "enableFaultInjection": false,
+    "tags": []
+}

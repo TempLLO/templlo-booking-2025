@@ -155,7 +155,7 @@ jobs:
       id: task-def
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       env:
-        ECS_TASK_DEFINITION: .github/workflows/templlo-${{ matrix.service }}-task-revision1.json
+        ECS_TASK_DEFINITION: .github/workflows/task/templlo-${{ matrix.service }}-task-revision1.json
         CONTAINER_NAME: ${{ matrix.service }}-container
       with:
         task-definition: ${{ env.ECS_TASK_DEFINITION }}
