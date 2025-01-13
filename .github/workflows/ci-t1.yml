@@ -1,0 +1,15 @@
+name: Run Test 1
+
+on: #main을 타켓으로 PR 올리거나, main에 Merge 될 때 워크플로우 실행
+  pull_request:
+    #    branches: [ "main" ]
+    branches: [ "deploy/71/ecs-deploy" ]
+  push:
+    #    branches: [ "main" ]
+    branches: [ "deploy/71/ecs-deploy" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Run Test 1 Started!"
