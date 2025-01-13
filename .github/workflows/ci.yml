@@ -9,10 +9,10 @@ on: #main을 타켓으로 PR 올리거나, main에 Merge 될 때 워크플로우
     branches: [ "deploy/71/ecs-deploy" ]
 
 jobs:
-  changes:
+  changes_ci:
     runs-on: ubuntu-latest
     outputs: # 이 job의 결과를 다른 job에서 사용할 수 있도록 output 설정
-      matrix: ${{ steps.filter.outputs.changes }}
+      matrix: ${{ steps.filter.outputs.changes_ci }}
     steps:
       - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v2 # 어떤 서비스 디렉토리가 변경되었는지 감지
@@ -37,14 +37,14 @@ jobs:
               - 'com.templlo.service.review/**'
 
   build:
-    needs: changes
-    if: ${{ needs.changes.outputs.matrix != '[]' }}
+    needs: changes_ci
+    if: ${{ needs.changes_ci.outputs.matrix != '[]' }}
     name: Build and Test Services
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false  # 하나의 서비스 실패해도 다른 서비스 계속 빌드
       matrix:
-        service: ${{ fromJSON(needs.changes.outputs.matrix) }}
+        service: ${{ fromJSON(needs.changes_ci.outputs.matrix) }}
 
     steps:
       - name: Checkout
