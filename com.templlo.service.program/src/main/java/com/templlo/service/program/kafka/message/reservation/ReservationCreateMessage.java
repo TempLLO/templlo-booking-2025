@@ -8,7 +8,9 @@ public record ReservationCreateMessage(
         UUID reservationId,
         UUID programId,
         LocalDate programDate,
+        ReservationOpenType openType,
         Gender gender,
+        Integer amount,
         CouponUsedType couponUsedType,
         UUID couponId
 ) {

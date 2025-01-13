@@ -33,4 +33,14 @@ public record ApiResponse<T>(
 			.data(data)
 			.build();
 	}
+
+	public static <T> ApiResponse<T> ofSuccess(T data) {
+		return ApiResponse.<T>builder()
+			.status(String.valueOf(BasicStatusCode.OK.getHttpStatus().value())) // HTTP 상태 코드 값
+			.code(BasicStatusCode.OK.getName()) // 상태 코드 이름
+			.message(BasicStatusCode.OK.getMessage()) // 기본 메시지
+			.data(data)
+			.build();
+	}
+
 }

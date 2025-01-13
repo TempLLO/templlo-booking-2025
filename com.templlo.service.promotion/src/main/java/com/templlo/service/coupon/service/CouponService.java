@@ -75,6 +75,7 @@ public class CouponService {
 			}
 
 			initializeRedisPromotionCounters(promotionId, promotion.getTotalCoupons());
+
 			boolean success = decrementRemainingCouponsAtomically(promotionId);
 
 			if (!success) {

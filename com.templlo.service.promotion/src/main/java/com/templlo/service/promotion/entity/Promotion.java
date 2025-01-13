@@ -68,9 +68,10 @@ public class Promotion extends BaseEntity {
 	private List<Coupon> coupons; // 쿠폰 리스트
 
 	@Builder
-	public Promotion(String name, String type, LocalDate startDate, LocalDate endDate, String status,
+	public Promotion(UUID promotionId, String name, String type, LocalDate startDate, LocalDate endDate, String status,
 		String couponType, int maleCoupons, int femaleCoupons, int totalCoupons,
 		int issuedCoupons, int remainingCoupons) {
+		this.promotionId = promotionId;
 		this.name = name;
 		this.type = type;
 		this.startDate = startDate;

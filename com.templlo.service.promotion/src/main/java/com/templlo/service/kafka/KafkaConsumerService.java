@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.templlo.service.coupon.dto.CouponIssueRequestDto;
-import com.templlo.service.coupon.dto.CouponIssuedResponseEvent;
 import com.templlo.service.coupon.dto.CouponUseResponseDto;
 import com.templlo.service.coupon.dto.TicketApplyRequestDto;
 import com.templlo.service.coupon.entity.Coupon;
@@ -37,23 +36,6 @@ public class KafkaConsumerService {
 	private final UserCouponRepository userCouponRepository;
 	private final KafkaProducerService kafkaProducerService;
 	private final CouponService couponService;
-
-	/**
-	 * 쿠폰 발행 이벤트 처리
-	 */
-	@KafkaListener(topics = "coupon-issue-topic", groupId = "coupon-service")
-	public void processCouponIssuedEvent(CouponIssueRequestDto request, Acknowledgment acknowledgment) {
-		try {
-			log.info("쿠폰 발급 요청 이벤트 처리: {}", request);
-
-			// 메시지 처리 로직
-
-			acknowledgment.acknowledge(); // 메시지 처리가 완료되면 Kafka에 Offset을 커밋
-		} catch (Exception e) {
-			log.error("쿠폰 발급 요청 처리 중 오류 발생: {}", e.getMessage(), e);
-			throw e; // 실패 시 메시지가 다시 처리될 수 있도록 예외를 던짐
-		}
-	}
 
 	/**
 	 * 티켓 신청 요청 처리
@@ -137,7 +119,8 @@ public class KafkaConsumerService {
 	 */
 	@KafkaListener(topics = "coupon-issue-topic", groupId = "coupon-service")
 	public void handleCouponIssueRequest(CouponIssueRequestDto request,
-		@Header(name = "X-Login-Id", required = false) String loginId) {
+		@Header(name = "X-Login-Id", required = false) String loginId, Acknowledgment acknowledgment) {
+
 		try {
 			log.info("쿠폰 발급 요청 이벤트 수신: {}, X-Login-Id: {}", request, loginId);
 
@@ -146,16 +129,22 @@ public class KafkaConsumerService {
 				loginId = "UNKNOWN";
 			}
 
+			// 쿠폰 조회 및 상태 확인
 			Coupon coupon = couponRepository.findById(request.couponId())
-				.orElseThrow(() -> new IllegalArgumentException("유효하지 않은 쿠폰 ID입니다."));
+				.orElseThrow(() -> new IllegalArgumentException("유효하지 않은 쿠폰 ID입니다. 쿠폰 ID: " + request.couponId()));
+
+			log.info("쿠폰 상태: {}, 쿠폰 ID: {}", coupon.getStatus(), coupon.getCouponId());
 
 			if (!"AVAILABLE".equalsIgnoreCase(coupon.getStatus())) {
+				log.warn("쿠폰 상태가 AVAILABLE이 아님: {}", coupon.getStatus());
 				throw new IllegalStateException("쿠폰이 이미 발급되었거나 사용할 수 없습니다.");
 			}
 
+			// 쿠폰 상태 업데이트
 			coupon.updateStatus("ISSUED");
 			couponRepository.save(coupon);
 
+			// UserCoupon 저장
 			UserCoupon userCoupon = UserCoupon.builder()
 				.userId(request.userId())
 				.userLoginId(loginId)
@@ -167,21 +156,37 @@ public class KafkaConsumerService {
 				.build();
 			userCouponRepository.save(userCoupon);
 
-			kafkaProducerService.sendMessageWithCallback("coupon-issued-response-topic", new CouponIssuedResponseEvent(
-				request.userId(),
-				"SUCCESS",
-				coupon.getCouponId()
-			));
+			// // 성공 메시지 전송
+			// kafkaProducerService.sendMessageWithCallback("coupon-issued-response-topic", new CouponIssuedResponseEvent(
+			// 	request.userId(),
+			// 	"SUCCESS",
+			// 	coupon.getCouponId()
+			// ));
 
 			log.info("쿠폰 발급 처리 완료: {}", coupon.getCouponId());
-		} catch (Exception e) {
-			log.error("쿠폰 발급 요청 처리 실패: {}", e.getMessage(), e);
 
-			kafkaProducerService.sendMessageWithCallback("coupon-issued-response-topic", new CouponIssuedResponseEvent(
-				request.userId(),
-				"FAILURE",
-				null
-			));
+			acknowledgment.acknowledge();
+		} catch (IllegalStateException e) {
+			log.error("쿠폰 발급 실패: {}", e.getMessage());
+
+			// // 실패 메시지 전송
+			// kafkaProducerService.sendMessageWithCallback("coupon-issued-response-topic", new CouponIssuedResponseEvent(
+			// 	request.userId(),
+			// 	"FAILURE",
+			// 	null
+			// ));
+			acknowledgment.acknowledge();
+
+		} catch (Exception e) {
+			log.error("쿠폰 발급 요청 처리 중 예기치 않은 오류 발생: {}", e.getMessage(), e);
+			acknowledgment.acknowledge();
+
+			// // 예외 메시지 전송
+			// kafkaProducerService.sendMessageWithCallback("coupon-issued-response-topic", new CouponIssuedResponseEvent(
+			// 	request.userId(),
+			// 	"FAILURE",
+			// 	null
+			// ));
 		}
 	}
 
