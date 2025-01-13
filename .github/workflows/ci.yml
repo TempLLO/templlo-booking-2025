@@ -2,9 +2,11 @@ name: Run Test 🚀
 
 on: #main을 타켓으로 PR 올리거나, main에 Merge 될 때 워크플로우 실행
   pull_request:
-    branches: [ "main" ]
+#    branches: [ "main" ]
+    branches: [ "deploy/71/ecs-deploy" ]
   push:
-    branches: [ "main" ]
+#    branches: [ "main" ]
+    branches: [ "deploy/71/ecs-deploy" ]
 
 jobs:
   changes:
@@ -61,3 +63,9 @@ jobs:
           echo "Building ${{ matrix.service }}"
           chmod +x gradlew
           ./gradlew clean build
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-libs-${{ matrix.service }}
+          path: build/libs/*.jar
