@@ -30,7 +30,9 @@ on:
   workflow_run:
     workflows: ["Run Test 1"]
     types:
-    - completed
+      - completed
+    branches:
+      - "deploy/71/ecs-deploy"
 
 jobs:
   test:
