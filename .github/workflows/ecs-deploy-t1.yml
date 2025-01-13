@@ -31,8 +31,8 @@ on:
     workflows: ["Run Test 1"]
     types:
       - completed
-    branches:
-      - "deploy/71/ecs-deploy"
+#    branches:
+#      - "deploy/71/ecs-deploy"
 
 jobs:
   test:
