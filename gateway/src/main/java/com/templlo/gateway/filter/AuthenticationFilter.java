@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpCookie;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -32,10 +33,13 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class AuthenticationFilter implements GlobalFilter {
 
+	private final RedisTemplate<String, String> redisTemplate;
 	private final static String BEARER_PREFIX = "Bearer ";
 	private static final String CLAIM_LOGIN_ID = "loginId";
 	private static final String CLAIM_USER_ROLE = "role";
 	private static final String REFRESH_TOKEN = "refresh";
+
+	private static final String BLACKLIST_PREFIX = "blacklist:";
 
 	private final JwtUtil jwtUtil;
 
@@ -77,6 +81,12 @@ public class AuthenticationFilter implements GlobalFilter {
 
 		if (accessToken == null) {
 			return handleInvalidToken(exchange, JwtValidType.EMPTY_TOKEN);
+		}
+
+		// 블랙리스트 체크
+		String blacklistKey = BLACKLIST_PREFIX + accessToken;
+		if (Boolean.TRUE.equals(redisTemplate.hasKey(blacklistKey))) {
+			return handleInvalidToken(exchange, JwtValidType.BLACKLIST_TOKEN);
 		}
 
 		JwtValidType validationType = jwtUtil.validateToken(accessToken);
@@ -155,6 +165,10 @@ public class AuthenticationFilter implements GlobalFilter {
 			case INVALID_TOKEN_TYPE:
 				msg = JwtValidType.INVALID_TOKEN_TYPE.getDescription();
 				response.setStatusCode(HttpStatus.UNAUTHORIZED);
+				break;
+			case BLACKLIST_TOKEN:
+				msg = JwtValidType.BLACKLIST_TOKEN.getDescription();
+				response.setStatusCode(HttpStatus.FORBIDDEN);
 				break;
 			default:
 				msg = JwtValidType.INVALID_TOKEN.getDescription();
