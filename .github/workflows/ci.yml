@@ -21,37 +21,37 @@ jobs:
     runs-on: ubuntu-latest
     outputs: # 이 job의 결과를 다른 job에서 사용할 수 있도록 output 설정
       matrix: ${{ steps.filter.outputs.changes }}
-      service-directories: ${{ steps.load-service-directories.outputs.service-directories }}
+      service-directory: ${{ steps.load-service-directory.outputs.service-directory }}
     steps:
       - uses: actions/checkout@v4
       - name: Load JSON and Generate Filters
-        id: load-service-directories
+        id: load-service-directory
         run: |
           # Load service_directories.json
-          service_directories_json=$(cat .github/workflows/service-directories.json)
+          service_directory_json=$(cat .github/workflows/service-directory.json)
           
-          # Generate service-directories
-          #generated_service=$(echo "$service_directories_json" | jq -r -c '
+          # Generate service-directory
+          #generated_service=$(echo "$service_directory_json" | jq -r -c '
           #  to_entries
           #  | map("\(.key):\n  - \(.value)")
           #  | join("\n")
           #')
-          service_directory_map=$(echo "$service_directories_json" | jq -c 'to_entries | map({key: .key, value: (.value)}) | from_entries')
+          service_directory_map=$(echo "$service_directory_json" | jq -c 'to_entries | map({key: .key, value: (.value)}) | from_entries')
           
-          echo "Generated service-directories:"
+          echo "Generated service-directory:"
           #echo "$generated_path"
           echo "$service_directory_map"
           
-          # Output the generated service-directories
+          # Output the generated service-directory
           #echo "generated_filters=$generated_service" >> $GITHUB_OUTPUT
-          echo "service-directories=$service_directory_map" >> $GITHUB_OUTPUT
+          echo "service-directory=$service_directory_map" >> $GITHUB_OUTPUT
         shell: bash
 
       - name: Apply Filters with Paths-Filter
         id: filter
         uses: dorny/paths-filter@v2
         with:
-          #          filters: ${{ steps.load-service-directories.outputs.generated_filters }}
+          #          filters: ${{ steps.load-service-directory.outputs.generated_filters }}
           filters: |
             gateway:
               - 'gateway/**'
@@ -91,14 +91,14 @@ jobs:
       - name: Logging matrix.service
         run: echo "${{ matrix.service }}"
 
-      - name: Logging needs.changes-ci.outputs.service-directories
-        run: echo "${{ needs.changes-ci.outputs.service-directories }}"
+      - name: Logging needs.changes-ci.outputs.service-directory
+        run: echo "${{ needs.changes-ci.outputs.service-directory }}"
 
-      - name: Logging needs.changes-ci.outputs.service-directories as map
+      - name: Logging needs.changes-ci.outputs.service-directory as map
         id: get-changed
         run: |
           key=${{ matrix.service }}
-          value=$(echo '${{ needs.changes-ci.outputs.service-directories }}' | jq -r --arg key "$key" '.[$key]')
+          value=$(echo '${{ needs.changes-ci.outputs.service-directory }}' | jq -r --arg key "$key" '.[$key]')
           echo "$value"
 
           echo "directory=$value" >> $GITHUB_OUTPUT
@@ -127,8 +127,8 @@ jobs:
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: build-libs-${{ steps.get-changed.outputs.directory }}
-          path: ${{ matrix.service }}/build/libs/*.jar
+          name: build-libs-${{ matrix.service }}
+          path: ${{ steps.get-changed.outputs.directory }}/build/libs/*.jar
 
   upload_ecr:
     name: Upload to ECR
