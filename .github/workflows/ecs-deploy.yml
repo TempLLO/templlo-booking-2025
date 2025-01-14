@@ -52,7 +52,7 @@ permissions:
   contents: read
 
 # 왜 다 돌아가지??? 트리거가 worflow라서 그런가?
-# 내일 하나로 합치자...
+# 하나로 합치자...
 jobs:
   changes:
     if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' }}
@@ -132,7 +132,7 @@ jobs:
 
     - name: Fill in the new image ID in the Amazon ECS task definition
       id: task-def
-      uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+      uses: aws-actions/amazon-ecs-render-task-definition@v1
       env:
         ECS_TASK_DEFINITION: .github/workflows/task/templlo-${{ matrix.service }}-task-revision1.json
         CONTAINER_NAME: templlo-${{ matrix.service }}-container
@@ -145,7 +145,7 @@ jobs:
         image: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
 
     - name: Deploy Amazon ECS task definition
-      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      uses: aws-actions/amazon-ecs-deploy-task-definition@v2
       env:
         ECS_SERVICE: templlo-${{ matrix.service }}-service
       with:
