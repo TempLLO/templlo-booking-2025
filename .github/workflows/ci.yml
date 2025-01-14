@@ -10,9 +10,7 @@ on: #main을 타켓으로 PR 올리거나, main에 Merge 될 때 워크플로우
 
 jobs:
 
-
-
-  changes_ci:
+  changes-ci:
     runs-on: ubuntu-latest
     outputs: # 이 job의 결과를 다른 job에서 사용할 수 있도록 output 설정
       matrix: ${{ steps.filter.outputs.changes }}
@@ -74,14 +72,14 @@ jobs:
         run: |
           echo "Filters Matched: ${{ steps.filter.outputs.changes }}"
   build:
-    needs: changes_ci
-    if: ${{ needs.changes_ci.outputs.matrix != '[]' }}
+    needs: changes-ci
+    if: ${{ needs.changes-ci.outputs.matrix != '[]' }}
     name: Build and Test Services
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false  # 하나의 서비스 실패해도 다른 서비스 계속 빌드
       matrix:
-        service: ${{ fromJSON(needs.changes_ci.outputs.matrix) }}
+        service: ${{ fromJSON(needs.changes-ci.outputs.matrix) }}
 
     steps:
       - name: Checkout
@@ -90,17 +88,17 @@ jobs:
       - name: Logging matrix.service
         run: echo "${{ matrix.service }}"
 
-      - name: Logging needs.changes_ci.outputs.service_names
-        run: echo "${{ needs.changes_ci.outputs.service_names }}"
+      - name: Logging needs.changes-ci.outputs.service_names
+        run: echo "${{ needs.changes-ci.outputs.service_names }}"
 
-      - name: Logging needs.changes_ci.outputs.service_names as map
+      - name: Logging needs.changes-ci.outputs.service_names as map
         id: get-service-name
         run: |
           key=${{ matrix.service }}
-          value=$(echo '${{ needs.changes_ci.outputs.service_names }}' | jq -r --arg key "$key" '.[$key]')
+          value=$(echo '${{ needs.changes-ci.outputs.service_names }}' | jq -r --arg key "$key" '.[$key]')
           echo "$value"
           echo "changed_service=$value" >> $GITHUB_OUTPUT
-      - name: Logging needs.changes_ci.outputs.service_names as map - result
+      - name: Logging needs.changes-ci.outputs.service_names as map - result
         run: echo "${{ steps.get-service-name.outputs.changed_service }}"
 
       - name: Logging steps.filter.outputs.changes
