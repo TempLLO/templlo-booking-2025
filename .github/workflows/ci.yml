@@ -9,32 +9,63 @@ on: #main을 타켓으로 PR 올리거나, main에 Merge 될 때 워크플로우
     branches: [ "deploy/71/ecs-deploy" ]
 
 jobs:
+
+
+
   changes_ci:
     runs-on: ubuntu-latest
     outputs: # 이 job의 결과를 다른 job에서 사용할 수 있도록 output 설정
       matrix: ${{ steps.filter.outputs.changes }}
     steps:
       - uses: actions/checkout@v4
-      - uses: dorny/paths-filter@v2 # 어떤 서비스 디렉토리가 변경되었는지 감지
+      - name: Load JSON and Generate Filters
+        id: load-filters
+        run: |
+          # Load the filters.json file
+          filters=$(cat .github/workflows/filters.json)
+          
+          # Generate filters dynamically
+          generated=$(echo "$filters" | jq -r '
+            to_entries
+            | map("\(.key):\n  - \(.value)/**")
+            | join("\n")
+          ')
+          
+          echo "Generated Filters:"
+          echo "$generated"
+          echo "::set-output name=generated_filters::$generated"
+        shell: bash
+
+      - name: Apply Filters with Paths-Filter
         id: filter
+        uses: dorny/paths-filter@v2
         with:
-          filters: |
-            gateway:
-              - 'gateway/**'
-            server:
-              - 'server/**'
-            com.templlo.service.user:
-              - 'com.templlo.service.user/**'
-            com.templlo.service.promotion:
-              - 'com.templlo.service.promotion/**'
-            com.templlo.service.reservation:
-              - 'com.templlo.service.reservation/**'
-            com.templlo.service.temple:
-              - 'com.templlo.service.temple/**'
-            com.templlo.service.program:
-              - 'com.templlo.service.program/**'
-            com.templlo.service.review:
-              - 'com.templlo.service.review/**'
+          filters: ${{ steps.load-filters.outputs.generated_filters }}
+
+      - name: Use Filtered Results
+        run: |
+          echo "Filters Matched: ${{ steps.filter.outputs.changes }}"
+
+#      - uses: dorny/paths-filter@v2 # 어떤 서비스 디렉토리가 변경되었는지 감지
+#        id: filter
+#        with:
+#          filters: |
+#            gateway:
+#              - 'gateway/**'
+#            server:
+#              - 'server/**'
+#            com.templlo.service.user:
+#              - 'com.templlo.service.user/**'
+#            com.templlo.service.promotion:
+#              - 'com.templlo.service.promotion/**'
+#            com.templlo.service.reservation:
+#              - 'com.templlo.service.reservation/**'
+#            com.templlo.service.temple:
+#              - 'com.templlo.service.temple/**'
+#            com.templlo.service.program:
+#              - 'com.templlo.service.program/**'
+#            com.templlo.service.review:
+#              - 'com.templlo.service.review/**'
 
   build:
     needs: changes_ci
