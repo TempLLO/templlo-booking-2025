@@ -30,7 +30,7 @@ jobs:
           #  | map("\(.key):\n  - \(.value)")
           #  | join("\n")
           #')
-          generated_path=$(echo "$filters" | jq 'to_entries | map({key: .key, value: (.value | sub("/\\*\\*$"; ""))}) | from_entries')
+          generated_path=$(echo "$filters" | jq -c 'to_entries | map({key: .key, value: (.value | sub("/\\*\\*$"; ""))}) | from_entries')
           
           
           echo "Generated Filters:"
