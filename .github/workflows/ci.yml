@@ -141,6 +141,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Get changed service directory from map
+        id: get-changed
+        run: |
+          service_name=${{ matrix.service }}
+          directory=$(echo '${{ needs.changes-ci.outputs.service-directory }}' | jq -r --arg key "$service_name" '.[$key]')
+          echo "$directory"
+          echo "directory=$directory" >> $GITHUB_OUTPUT
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -154,7 +162,7 @@ jobs:
 
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
-        working-directory: ${{ matrix.service }}
+        working-directory: ${{ steps.get-changed.outputs.directory }}
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: templlo-2025-g1/${{ matrix.service }}
