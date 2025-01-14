@@ -99,12 +99,13 @@ jobs:
         run: echo "${{ needs.changes_ci.outputs.generated_service }}"
 
       - name: Logging needs.changes_ci.outputs.generated_service as map
+#        id: get-map
         run: |
           key=user
           value=$(echo '${{ needs.changes_ci.outputs.generated_service }}' | jq -r --arg key "$key" '.[$key]')
+          echo "$value"
 
-
-
+#          echo "map_value=$value" >> $GITHUB_OUTPUT
       - name: Logging steps.filter.outputs.changes
         run: echo "${{ steps.filter.outputs.changes }}"
 
