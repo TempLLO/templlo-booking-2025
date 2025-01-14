@@ -36,15 +36,15 @@ jobs:
           #  | map("\(.key):\n  - \(.value)")
           #  | join("\n")
           #')
-          service_directory_map=$(echo "$service-directories-json" | jq -c 'to_entries | map({key: .key, value: (.value)}) | from_entries')
+          service-directory-map=$(echo "$service-directories-json" | jq -c 'to_entries | map({key: .key, value: (.value)}) | from_entries')
           
           echo "Generated service-directories:"
           #echo "$generated_path"
-          echo "$service_directory_map"
+          echo "$service-directory-map"
           
           # Output the generated service-directories
           #echo "generated_filters=$generated_service" >> $GITHUB_OUTPUT
-          echo "service-directories=$service_directory_map" >> $GITHUB_OUTPUT
+          echo "service-directories=$service-directory-map" >> $GITHUB_OUTPUT
         shell: bash
 
       - name: Apply Filters with Paths-Filter
