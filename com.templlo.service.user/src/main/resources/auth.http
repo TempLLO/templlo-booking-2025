@@ -1,0 +1,12 @@
+@accessToken = eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3MzY3NzI3NjUsImV4cCI6MTczNjc3NDU2NSwibG9naW5JZCI6InRlc3Q5OTk5Iiwicm9sZSI6Ik1FTUJFUiIsInR5cGUiOiJhY2Nlc3MifQ.CiyBdoExq0Sbv4LPo6pUmZ1ghnEnlMsM4bO3w5U16Fs
+@refreshToken = eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3MzY3NzI3NjUsImV4cCI6MTczNjg1OTE2NSwibG9naW5JZCI6InRlc3Q5OTk5Iiwicm9sZSI6Ik1FTUJFUiIsInR5cGUiOiJyZWZyZXNoIn0.EUoiPqIopT5bA5kJopr_nPKuFGdugv5YrPE1IGxv7vU
+
+### 토큰 재발급 : 쿠키에 refreshToken 담아서 보내야함.
+POST http://localhost:19091/api/auth/reissue
+Authorization: Bearer {{accessToken}}
+Cookie: refresh={{refreshToken}}
+
+### 로그아웃 : 쿠키에 refreshToken 담아서 보내야함.
+POST http://localhost:19091/api/auth/logout
+Authorization: Bearer {{accessToken}}
+Cookie: refresh={{refreshToken}}

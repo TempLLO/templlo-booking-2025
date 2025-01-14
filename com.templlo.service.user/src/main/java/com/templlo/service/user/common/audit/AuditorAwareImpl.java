@@ -7,7 +7,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.templlo.service.user.common.security.GatewayUserDetailsImpl;
-import com.templlo.service.user.common.security.UserDetailsImpl;
 
 public class AuditorAwareImpl implements AuditorAware<String> {
 
@@ -25,7 +24,7 @@ public class AuditorAwareImpl implements AuditorAware<String> {
 		}
 
 		Object principal = authentication.getPrincipal();
-		if (principal instanceof UserDetailsImpl) {
+		if (principal instanceof GatewayUserDetailsImpl) {
 			GatewayUserDetailsImpl userDetails = (GatewayUserDetailsImpl) principal;
 			return Optional.of((userDetails.getLoginId()));
 		}

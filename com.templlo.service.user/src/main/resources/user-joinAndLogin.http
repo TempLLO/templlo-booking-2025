@@ -1,4 +1,4 @@
-### 회원가입 - MEMBER
+### 회원가입 - MEMBER1
 POST http://localhost:19091/api/users/sign-up
 Content-Type: application/json
 
@@ -12,6 +12,22 @@ Content-Type: application/json
   "birth" : "1990-01-31",
   "role" : "MEMBER",
   "phone" : "010-1234-1234"
+}
+
+### 회원가입 - MEMBER2
+POST http://localhost:19091/api/users/sign-up
+Content-Type: application/json
+
+{
+  "loginId" : "test9999",
+  "email": "test9999@naver.com",
+  "password": "Test1234!!",
+  "userName": "김아무개",
+  "nickName" : "아무개",
+  "gender": "MALE",
+  "birth" : "1995-01-31",
+  "role" : "MEMBER",
+  "phone" : "010-1234-9999"
 }
 
 ### 회원가입 - TEMPLE_ADMIN
@@ -46,12 +62,21 @@ Content-Type: application/json
   "phone" : "010-1234-1234"
 }
 
-### 로그인 - MEMBER
+### 로그인 - MEMBER1
 POST http://localhost:19091/api/auth/login
 Content-Type: application/json
 
 {
   "loginId": "test1234",
+  "password": "Test1234!!"
+}
+
+### 로그인 - MEMBER2
+POST http://localhost:19091/api/auth/login
+Content-Type: application/json
+
+{
+  "loginId": "test9999",
   "password": "Test1234!!"
 }
 

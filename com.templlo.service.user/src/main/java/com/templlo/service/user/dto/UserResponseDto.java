@@ -14,7 +14,8 @@ public record UserResponseDto(
 	String birth,
 	String role,
 	String phone,
-	int reviewCount
+	int reviewCount,
+	boolean isDeleted
 ) {
 	public static UserResponseDto from(User user) {
 		return new UserResponseDto(
@@ -27,7 +28,8 @@ public record UserResponseDto(
 			user.getBirth(),
 			user.getRole().name(),
 			user.getPhone(),
-			user.getReviewCount()
+			user.getReviewCount(),
+			user.isDeleted()
 		);
 	}
 

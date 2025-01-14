@@ -12,6 +12,7 @@ public enum BasicStatusCode implements StatusCode {
 	// 200
 	OK(HttpStatus.OK, "API 요청에 성공했습니다"),
 	REISSUE_TOKEN(HttpStatus.CREATED, "토큰이 재발급되었습니다. "),
+	LOGOUT(HttpStatus.OK, "로그아웃되었습니다. "),
 
 	// 클라이언트 에러
 	BAD_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
@@ -23,6 +24,7 @@ public enum BasicStatusCode implements StatusCode {
 
 	NOT_FOUND(HttpStatus.NOT_FOUND, "요청 리소스를 찾을 수 없습니다."),
 	USER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 유저를 찾을 수 없습니다. "),
+	REFRESH_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "refreshToken을 찾을 수 없습니다. "),
 
 	// 서버 에러
 	NPE(HttpStatus.INTERNAL_SERVER_ERROR, "NPE"),

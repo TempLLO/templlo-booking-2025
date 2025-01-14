@@ -18,6 +18,7 @@ public class GatewayUserDetailsImpl implements UserDetails {
 
 	private final String loginId;
 	private final String role;
+	private final String accessToken;
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -36,5 +37,9 @@ public class GatewayUserDetailsImpl implements UserDetails {
 
 	public UserRole getUserRole() {
 		return UserRole.fromString(role);
+	}
+
+	public String getAccessToken() {
+		return accessToken;
 	}
 }

@@ -123,4 +123,21 @@ public class User {
 		this.reviewCount++;
 		return reviewCount % 5 == 0;
 	}
+
+	public void updateUser(String password, String email, String userName, String nickName,
+		Gender gender, String birth, String phone) {
+		this.password = password;
+		this.email = email;
+		this.userName = userName;
+		this.nickName = nickName;
+		this.gender = gender;
+		this.birth = birth;
+		this.phone = phone;
+	}
+
+	public void deleteUser(String loginId) {
+		this.deletedAt = LocalDateTime.now();
+		this.deletedBy = loginId;
+		this.isDeleted = true;
+	}
 }

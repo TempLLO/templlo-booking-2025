@@ -1,0 +1,34 @@
+@accessToken = eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3MzY4MjM0NTEsImV4cCI6MTczNjgyNTI1MSwibG9naW5JZCI6InRlc3Q5OTk5Iiwicm9sZSI6Ik1FTUJFUiIsInR5cGUiOiJhY2Nlc3MifQ.P18eC0cz10EynwlUi1MCKWzjVz4fvEU45jcIzRiyf8U
+@loginId = test1234
+
+### 유저 조회
+GET http://localhost:19091/api/users/{{loginId}}
+Authorization: Bearer {{accessToken}}
+
+### 개인정보 수정
+PATCH http://localhost:19091/api/users/me
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "email": "qwer000-@naver.com",
+  "password": "Qwer0000!",
+  "userName": "오징어",
+  "nickName" : "오징어게임",
+  "gender": "MALE",
+  "birth" : "1995-01-31",
+  "phone" : "010-1234-1234"
+}
+
+### 정보 수정 후 재로그인
+POST http://localhost:19091/api/auth/login
+Content-Type: application/json
+
+{
+  "loginId": "test9999",
+  "password": "Qwer0000!"
+}
+
+### 계정 탈퇴
+DELETE http://localhost:19091/api/users/me
+Authorization: Bearer {{accessToken}}

@@ -7,7 +7,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.templlo.service.user.external.kafka.consumer.dto.ReviewCreatedEventDto;
 import com.templlo.service.user.external.kafka.topic.ConsumerTopic;
-import com.templlo.service.user.service.UpdateUserService;
+import com.templlo.service.user.service.ModifyUserService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 public class EventListener {
 
 	private final ObjectMapper objectMapper;
-	private final UpdateUserService updateUserService;
+	private final ModifyUserService modifyUserService;
 
 	@KafkaListener(topics = ConsumerTopic.REVIEW_CREATED, groupId = "user-consumer-group-review", containerFactory = "listenerFactory")
 	public void handleReviewCreated(String message) {
@@ -26,7 +26,7 @@ public class EventListener {
 		try {
 			// Todo serializer class 따로 구현할지
 			ReviewCreatedEventDto eventDto = objectMapper.readValue(message, ReviewCreatedEventDto.class);
-			updateUserService.updateReviewCount(eventDto);
+			modifyUserService.updateReviewCount(eventDto);
 		} catch (JsonProcessingException e) {
 			log.error("JSON Parsing Error : {}", e.getMessage());
 		}
