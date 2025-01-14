@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs: # 이 job의 결과를 다른 job에서 사용할 수 있도록 output 설정
       matrix: ${{ steps.filter.outputs.changes }}
-      service_names: ${{ steps.load-filters.outputs.service_names }}
+      service-directories: ${{ steps.load-filters.outputs.service-directories }}
     steps:
       - uses: actions/checkout@v4
       - name: Load JSON and Generate Filters
@@ -37,7 +37,7 @@ jobs:
           
           # Output the generated filters
           #echo "generated_filters=$generated_service" >> $GITHUB_OUTPUT
-          echo "service_names=$service_name_map" >> $GITHUB_OUTPUT
+          echo "service-directories=$service_name_map" >> $GITHUB_OUTPUT
         shell: bash
 
       #      - name: Debug Output
@@ -88,17 +88,17 @@ jobs:
       - name: Logging matrix.service
         run: echo "${{ matrix.service }}"
 
-      - name: Logging needs.changes-ci.outputs.service_names
-        run: echo "${{ needs.changes-ci.outputs.service_names }}"
+      - name: Logging needs.changes-ci.outputs.service-directories
+        run: echo "${{ needs.changes-ci.outputs.service-directories }}"
 
-      - name: Logging needs.changes-ci.outputs.service_names as map
+      - name: Logging needs.changes-ci.outputs.service-directories as map
         id: get-service-name
         run: |
           key=${{ matrix.service }}
-          value=$(echo '${{ needs.changes-ci.outputs.service_names }}' | jq -r --arg key "$key" '.[$key]')
+          value=$(echo '${{ needs.changes-ci.outputs.service-directories }}' | jq -r --arg key "$key" '.[$key]')
           echo "$value"
           echo "changed_service=$value" >> $GITHUB_OUTPUT
-      - name: Logging needs.changes-ci.outputs.service_names as map - result
+      - name: Logging needs.changes-ci.outputs.service-directories as map - result
         run: echo "${{ steps.get-service-name.outputs.changed_service }}"
 
       - name: Logging steps.filter.outputs.changes
