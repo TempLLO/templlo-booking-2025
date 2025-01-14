@@ -6,6 +6,10 @@ spring:
     driver-class-name: org.h2.Driver
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
+  data:
+    redis:
+      host: localhost
+      port: 6379
 
 jwt:
   secret: templlo123456789templlo123456789templlo123456789templlo123456789templlo123456789templlo123456789
