@@ -16,43 +16,37 @@ jobs:
     runs-on: ubuntu-latest
     outputs: # 이 job의 결과를 다른 job에서 사용할 수 있도록 output 설정
       matrix: ${{ steps.filter.outputs.changes }}
-      service_names: ${{ steps.load-filters.outputs.service_names }}
+      service_names: ${{ steps.load-service-names.outputs.service_names }}
     steps:
       - uses: actions/checkout@v4
       - name: Load JSON and Generate Filters
-        id: load-filters
+        id: load-service-names
         run: |
-          # Load filters.json
-          filters=$(cat .github/workflows/filters.json)
+          # Load service-names.json
+          service-names-json=$(cat .github/workflows/service-names.json)
           
-          # Generate filters
-          #generated_service=$(echo "$filters" | jq -r -c '
+          # Generate service-names
+          #generated_service=$(echo "$service-names-json" | jq -r -c '
           #  to_entries
           #  | map("\(.key):\n  - \(.value)")
           #  | join("\n")
           #')
-          service_name_map=$(echo "$filters" | jq -c 'to_entries | map({key: .key, value: (.value)}) | from_entries')
+          service_name_map=$(echo "$service-names-json" | jq -c 'to_entries | map({key: .key, value: (.value)}) | from_entries')
           
-          echo "Generated Filters:"
+          echo "Generated service-names:"
           #echo "$generated_path"
           echo "$service_name"
           
-          # Output the generated filters
+          # Output the generated service-names
           #echo "generated_filters=$generated_service" >> $GITHUB_OUTPUT
           echo "service_names=$service_name_map" >> $GITHUB_OUTPUT
         shell: bash
-
-#      - name: Debug Output
-#        run: |
-#          echo "Filters from load-filters:"
-#          echo "${{ steps.load-filters.outputs.generated_filters }}"
-#          echo "${{ steps.load-filters.outputs.generated_filters }}"
 
       - name: Apply Filters with Paths-Filter
         id: filter
         uses: dorny/paths-filter@v2
         with:
-#          filters: ${{ steps.load-filters.outputs.generated_filters }}
+#          filters: ${{ steps.load-service-names.outputs.generated_filters }}
           filters: |
             gateway:
               - 'gateway/**'
