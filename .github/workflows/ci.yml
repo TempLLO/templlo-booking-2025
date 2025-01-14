@@ -96,7 +96,7 @@ jobs:
         id: get-changed
         run: |
           service_name=${{ matrix.service }}
-          directory=$(echo '${{ needs.changes-ci.outputs.service-directory }}' | jq -r --arg key "$service_name" '.[$service_name]')
+          directory=$(echo '${{ needs.changes-ci.outputs.service-directory }}' | jq -r --arg key "$service_name" '.[$key]')
           echo "$directory"
           echo "directory=$directory" >> $GITHUB_OUTPUT
       - name: Logging steps.get-changed.outputs.directory (from map)
