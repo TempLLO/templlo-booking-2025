@@ -159,7 +159,7 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: templlo-2025-g1/${{ matrix.service }}
-          IMAGE_TAG: ${{ github.sha }}
+          IMAGE_TAG: latest # ${{ github.sha }}
         run: |
           # Build a docker container and
           # push it to ECR so that it can

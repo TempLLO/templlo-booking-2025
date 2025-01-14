@@ -135,10 +135,13 @@ jobs:
       env:
         ECS_TASK_DEFINITION: .github/workflows/task/templlo-${{ matrix.service }}-task-revision1.json
         CONTAINER_NAME: ${{ matrix.service }}-container
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: templlo-2025-g1/${{ matrix.service }}
+        IMAGE_TAG: latest # ${{ github.sha }}
       with:
         task-definition: ${{ env.ECS_TASK_DEFINITION }}
         container-name: ${{ env.CONTAINER_NAME }}
-        image: ${{ steps.build-image.outputs.image }}
+        image: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
 
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
