@@ -3,4 +3,5 @@ test 2
 test 3.0
 test 4
 
-eureka deploy test 1
+eureka ecr test 1
+eureka ecr test 1.1
