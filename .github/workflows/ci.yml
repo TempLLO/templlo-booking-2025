@@ -26,7 +26,7 @@ jobs:
           filters=$(cat .github/workflows/filters.json)
           
           # Generate filters
-           generated_path=$(echo "$filters" | jq -r '
+          generated_path=$(echo "$filters" | jq -rc '
             to_entries
             | map("\(.key):\n  - \(.value)")
             | join("\n")
