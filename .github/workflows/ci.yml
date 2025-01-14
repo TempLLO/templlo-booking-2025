@@ -128,8 +128,8 @@ jobs:
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: build-libs-${{ matrix.service }}
-          path: ${{ steps.get-service-name.outputs.changed_service }}/build/libs/*.jar
+          name: build-libs-${{ steps.get-service-name.outputs.changed_service }}
+          path: ${{ matrix.service }}/build/libs/*.jar
 
 #  upload_build_result:
 #    name: Upload to ECR
