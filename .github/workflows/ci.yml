@@ -119,7 +119,7 @@ jobs:
           cache: gradle
 
       - name: Build and Test
-        working-directory: ${{ steps.get-service-name.outputs.changed_service }}
+        working-directory: ${{ matrix.service }}
         run: |
           echo "Building ${{ matrix.service }}"
           chmod +x gradlew
