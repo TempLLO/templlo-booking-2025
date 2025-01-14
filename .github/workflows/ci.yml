@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs: # 이 job의 결과를 다른 job에서 사용할 수 있도록 output 설정
       matrix: ${{ steps.filter.outputs.changes }}
-      generated_directories: ${{ steps.load-filters.outputs.generated_directories }}
+      service_names: ${{ steps.load-filters.outputs.service_names }}
     steps:
       - uses: actions/checkout@v4
       - name: Load JSON and Generate Filters
@@ -31,16 +31,15 @@ jobs:
           #  | map("\(.key):\n  - \(.value)")
           #  | join("\n")
           #')
-          generated_directory=$(echo "$filters" | jq -c 'to_entries | map({key: .key, value: (.value)}) | from_entries')
-          
+          service_name_map=$(echo "$filters" | jq -c 'to_entries | map({key: .key, value: (.value)}) | from_entries')
           
           echo "Generated Filters:"
           #echo "$generated_path"
-          echo "$generated_service"
+          echo "$service_name"
           
           # Output the generated filters
           #echo "generated_filters=$generated_service" >> $GITHUB_OUTPUT
-          echo "generated_directories=$generated_directory" >> $GITHUB_OUTPUT
+          echo "service_names=$service_name_map" >> $GITHUB_OUTPUT
         shell: bash
 
 #      - name: Debug Output
@@ -57,19 +56,19 @@ jobs:
           filters: |
             gateway:
               - 'gateway/**'
-            eureka-server:
+            server:
               - 'server/**'
-            user:
+            com.templlo.service.user:
               - 'com.templlo.service.user/**'
-            promotion:
+            com.templlo.service.promotion:
               - 'com.templlo.service.promotion/**'
-            reservation:
+            com.templlo.service.reservation:
               - 'com.templlo.service.reservation/**'
-            temple:
+            com.templlo.service.temple:
               - 'com.templlo.service.temple/**'
-            program:
+            com.templlo.service.program:
               - 'com.templlo.service.program/**'
-            review:
+            com.templlo.service.review:
               - 'com.templlo.service.review/**'
 
       - name: Use Filtered Results
@@ -93,20 +92,20 @@ jobs:
       - name: Logging matrix.service
         run: echo "${{ matrix.service }}"
 
-      - name: Logging needs.changes_ci.outputs.generated_directories
-        run: echo "${{ needs.changes_ci.outputs.generated_directories }}"
+      - name: Logging needs.changes_ci.outputs.service_names
+        run: echo "${{ needs.changes_ci.outputs.service_names }}"
 
-      - name: Logging needs.changes_ci.outputs.generated_directories as map
+      - name: Logging needs.changes_ci.outputs.service_names as map
         id: get-map
         run: |
           key=user
-          value=$(echo '${{ needs.changes_ci.outputs.generated_directories }}' | jq -r --arg key "$key" '.[$key]')
+          value=$(echo '${{ needs.changes_ci.outputs.service_names }}' | jq -r --arg key "$key" '.[$key]')
           echo "$value"
 
-          echo "changed_directory=$value" >> $GITHUB_OUTPUT
+          echo "changed_service=$value" >> $GITHUB_OUTPUT
 
-      - name: Logging needs.changes_ci.outputs.generated_directories as map - result
-        run: echo "${{ steps.get-map.outputs.changed_directory }}"
+      - name: Logging needs.changes_ci.outputs.service_names as map - result
+        run: echo "${{ steps.get-map.outputs.changed_service }}"
 
       - name: Logging steps.filter.outputs.changes
         run: echo "${{ steps.filter.outputs.changes }}"
@@ -120,7 +119,7 @@ jobs:
           cache: gradle
 
       - name: Build and Test
-        working-directory: ${{ steps.get-map.outputs.changed_directory }}
+        working-directory: ${{ steps.get-map.outputs.changed_service }}
         run: |
           echo "Building ${{ matrix.service }}"
           chmod +x gradlew
@@ -130,4 +129,8 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: build-libs-${{ matrix.service }}
-          path: ${{ steps.get-map.outputs.changed_directory }}/build/libs/*.jar
+          path: ${{ steps.get-map.outputs.changed_service }}/build/libs/*.jar
+
+#  upload_build_result:
+#    name: Upload to ECR
+#
