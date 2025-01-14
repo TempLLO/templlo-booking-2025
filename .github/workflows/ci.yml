@@ -23,7 +23,7 @@ jobs:
         id: load-filters
         run: |
           # Load filters.json
-          service-directories-json=$(cat .github/workflows/service-directories.json)
+          filters=$(cat .github/workflows/filters.json)
           
           # Generate filters
           #generated_service=$(echo "$filters" | jq -r -c '
@@ -31,7 +31,7 @@ jobs:
           #  | map("\(.key):\n  - \(.value)")
           #  | join("\n")
           #')
-          service_name_map=$(echo "$service-directories-json" | jq -c 'to_entries | map({key: .key, value: (.value)}) | from_entries')
+          service_name_map=$(echo "$filters" | jq -c 'to_entries | map({key: .key, value: (.value)}) | from_entries')
           
           echo "Generated Filters:"
           #echo "$generated_path"
