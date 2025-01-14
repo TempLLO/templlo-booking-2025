@@ -44,7 +44,7 @@ jobs:
           
           # Output the generated service-directories
           #echo "generated_filters=$generated_service" >> $GITHUB_OUTPUT
-          echo "service-directories=service_directory_map" >> $GITHUB_OUTPUT
+          echo "service-directories=$service_directory_map" >> $GITHUB_OUTPUT
         shell: bash
 
       - name: Apply Filters with Paths-Filter
