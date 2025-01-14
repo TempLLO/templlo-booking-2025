@@ -134,7 +134,7 @@ jobs:
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       env:
         ECS_TASK_DEFINITION: .github/workflows/task/templlo-${{ matrix.service }}-task-revision1.json
-        CONTAINER_NAME: ${{ matrix.service }}-container
+        CONTAINER_NAME: templlo-${{ matrix.service }}-container
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: templlo-2025-g1/${{ matrix.service }}
         IMAGE_TAG: latest # ${{ github.sha }}

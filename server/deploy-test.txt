@@ -13,3 +13,4 @@ eureka ecr test 1.5
 
 eureka deploy test 1
 eureka deploy test 2
+eureka deploy test 3
