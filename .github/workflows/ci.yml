@@ -15,8 +15,6 @@ env:
 
 jobs:
 
-
-
   changes-ci:
     runs-on: ubuntu-latest
     outputs: # 이 job의 결과를 다른 job에서 사용할 수 있도록 output 설정
@@ -27,7 +25,7 @@ jobs:
       - name: Load JSON and Generate Filters
         id: load-service-directory
         run: |
-          # Load service_directories.json
+          # Load service-directory.json
           service_directory_json=$(cat .github/workflows/service-directory.json)
           
           # Generate service-directory
@@ -94,15 +92,13 @@ jobs:
       - name: Logging needs.changes-ci.outputs.service-directory
         run: echo "${{ needs.changes-ci.outputs.service-directory }}"
 
-      - name: Logging needs.changes-ci.outputs.service-directory as map
+      - name: Get changed service directory from map
         id: get-changed
         run: |
-          key=${{ matrix.service }}
-          value=$(echo '${{ needs.changes-ci.outputs.service-directory }}' | jq -r --arg key "$key" '.[$key]')
-          echo "$value"
-
-          echo "directory=$value" >> $GITHUB_OUTPUT
-
+          service_name=${{ matrix.service }}
+          directory=$(echo '${{ needs.changes-ci.outputs.service-directory }}' | jq -r --arg key "$service_name" '.[$service_name]')
+          echo "$directory"
+          echo "directory=$directory" >> $GITHUB_OUTPUT
       - name: Logging steps.get-changed.outputs.directory (from map)
         run: echo "${{ steps.get-changed.outputs.directory }}"
 
@@ -118,9 +114,9 @@ jobs:
           cache: gradle
 
       - name: Build and Test
-        working-directory: ${{ matrix.service }}
+        working-directory: ${{ steps.get-changed.outputs.directory }}
         run: |
-          echo "Building ${{ matrix.service }}"
+          echo "Building ${{ steps.get-changed.outputs.directory }}"
           chmod +x gradlew
           ./gradlew clean build
 
