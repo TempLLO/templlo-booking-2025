@@ -81,8 +81,6 @@ jobs:
             review:
               - 'com.templlo.service.review/**'
 
-
-
   deploy:
     needs: changes
     if: ${{ needs.changes.outputs.matrix != '[]' }}
@@ -100,12 +98,6 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
-    - name: Download Build Artifacts
-      uses: actions/download-artifact@v3
-      with:
-        name: build-libs-${{ matrix.service }}
-        path: build/libs
-
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -116,20 +108,20 @@ jobs:
     - name: Login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
-
-    - name: Build, tag, and push image to Amazon ECR
-      id: build-image
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: templlo-2025-g1/${{ matrix.service }}
-        IMAGE_TAG: ${{ github.sha }}
-      run: |
-        # Build a docker container and
-        # push it to ECR so that it can
-        # be deployed to ECS.
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+#
+#    - name: Build, tag, and push image to Amazon ECR
+#      id: build-image
+#      env:
+#        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#        ECR_REPOSITORY: templlo-2025-g1/${{ matrix.service }}
+#        IMAGE_TAG: ${{ github.sha }}
+#      run: |
+#        # Build a docker container and
+#        # push it to ECR so that it can
+#        # be deployed to ECS.
+#        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+#        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+#        echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
     - name: Fill in the new image ID in the Amazon ECS task definition
       id: task-def
