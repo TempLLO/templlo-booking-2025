@@ -1,0 +1,10 @@
+{
+  "gateway": "gateway",
+  "eureka-server": "server",
+  "user": "com.templlo.service.user",
+  "promotion": "com.templlo.service.promotion",
+  "reservation": "com.templlo.service.reservation",
+  "temple": "com.templlo.service.temple",
+  "program": "com.templlo.service.program",
+  "review": "com.templlo.service.review"
+}
