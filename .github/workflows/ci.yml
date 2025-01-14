@@ -149,6 +149,12 @@ jobs:
           echo "$directory"
           echo "directory=$directory" >> $GITHUB_OUTPUT
 
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build-libs-${{ matrix.service }}
+          path: ${{ steps.get-changed.outputs.directory }}/build/libs
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
