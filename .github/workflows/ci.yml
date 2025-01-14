@@ -16,6 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs: # 이 job의 결과를 다른 job에서 사용할 수 있도록 output 설정
       matrix: ${{ steps.filter.outputs.changes }}
+      generated_service: ${{ steps.load-filters.outputs.generated_services }}
     steps:
       - uses: actions/checkout@v4
       - name: Load JSON and Generate Filters
@@ -25,12 +26,12 @@ jobs:
           filters=$(cat .github/workflows/filters.json)
           
           # Generate filters
-          # generated=$(echo "$filters" | jq -r '
-          #  to_entries
-          #  | map("\(.key):\n  - \(.value)")
-          #  | join("\n")
-          #')
-          generated_path=$(echo "$filters" | jq -c 'to_entries | map({key: .key, value: (.value | sub("/\\*\\*$"; ""))}) | from_entries')
+           generated_path=$(echo "$filters" | jq -r '
+            to_entries
+            | map("\(.key):\n  - \(.value)")
+            | join("\n")
+          ')
+          generated_service=$(echo "$filters" | jq -c 'to_entries | map({key: .key, value: (.value | sub("/\\*\\*$"; ""))}) | from_entries')
           
           
           echo "Generated Filters:"
@@ -38,12 +39,14 @@ jobs:
           
           # Output the generated filters
           echo "generated_filters=$generated_path" >> $GITHUB_OUTPUT
+          echo "generated_services=$generated_service" >> $GITHUB_OUTPUT
         shell: bash
 
-      - name: Debug Output
-        run: |
-          echo "Filters from load-filters:"
-          echo "${{ steps.load-filters.outputs.generated_filters }}"
+#      - name: Debug Output
+#        run: |
+#          echo "Filters from load-filters:"
+#          echo "${{ steps.load-filters.outputs.generated_filters }}"
+#          echo "${{ steps.load-filters.outputs.generated_filters }}"
 
       - name: Apply Filters with Paths-Filter
         id: filter
@@ -88,6 +91,8 @@ jobs:
       fail-fast: false  # 하나의 서비스 실패해도 다른 서비스 계속 빌드
       matrix:
         service: ${{ fromJSON(needs.changes_ci.outputs.matrix) }}
+#        generated_service: ${{ fromJSON(needs.changes_ci.outputs.generated_service) }}
+
 
     steps:
       - name: Checkout
@@ -95,6 +100,9 @@ jobs:
 
       - name: Logging matrix.service
         run: echo "${{ matrix.service }}"
+
+      - name: Logging needs.changes_ci.outputs.generated_service
+        run: echo "${{ needs.changes_ci.outputs.generated_service }}"
 
       - name: Logging steps.filter.outputs.changes
         run: echo "${{ steps.filter.outputs.changes }}"
