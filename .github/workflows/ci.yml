@@ -23,7 +23,7 @@ jobs:
         id: load-filters
         run: |
           # Load filters.json
-          filters=$(cat .github/workflows/filters.json)
+          service-directories-json=$(cat .github/workflows/service-directories.json)
           
           # Generate filters
           #generated_service=$(echo "$filters" | jq -r -c '
@@ -31,7 +31,7 @@ jobs:
           #  | map("\(.key):\n  - \(.value)")
           #  | join("\n")
           #')
-          service_name_map=$(echo "$filters" | jq -c 'to_entries | map({key: .key, value: (.value)}) | from_entries')
+          service_name_map=$(echo "$service-directories-json" | jq -c 'to_entries | map({key: .key, value: (.value)}) | from_entries')
           
           echo "Generated Filters:"
           #echo "$generated_path"
@@ -56,19 +56,19 @@ jobs:
           filters: |
             gateway:
               - 'gateway/**'
-            server:
+            eureka-server:
               - 'server/**'
-            com.templlo.service.user:
+            user:
               - 'com.templlo.service.user/**'
-            com.templlo.service.promotion:
+            promotion:
               - 'com.templlo.service.promotion/**'
-            com.templlo.service.reservation:
+            reservation:
               - 'com.templlo.service.reservation/**'
-            com.templlo.service.temple:
+            temple:
               - 'com.templlo.service.temple/**'
-            com.templlo.service.program:
+            program:
               - 'com.templlo.service.program/**'
-            com.templlo.service.review:
+            review:
               - 'com.templlo.service.review/**'
       - name: Use Filtered Results
         run: |
