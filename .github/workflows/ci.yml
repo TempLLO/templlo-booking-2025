@@ -31,7 +31,7 @@ jobs:
           #  | map("\(.key):\n  - \(.value)")
           #  | join("\n")
           #')
-          generated_directory=$(echo "$filters" | jq -c 'to_entries | map({key: .key, value: (.value))}) | from_entries')
+          generated_directory=$(echo "$filters" | jq -c 'to_entries | map({key: .key, value: (.value)}) | from_entries')
           
           
           echo "Generated Filters:"
