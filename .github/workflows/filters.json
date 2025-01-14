@@ -1,10 +1,10 @@
 {
-  "gateway": "gateway",
-  "server": "server",
-  "com.templlo.service.user": "com.templlo.service.user",
-  "com.templlo.service.promotion": "com.templlo.service.promotion",
-  "com.templlo.service.reservation": "com.templlo.service.reservation",
-  "com.templlo.service.temple": "com.templlo.service.temple",
-  "com.templlo.service.program": "com.templlo.service.program",
-  "com.templlo.service.review": "com.templlo.service.review"
+  "gateway": "gateway/**",
+  "server": "server/**",
+  "com.templlo.service.user": "com.templlo.service.user/**",
+  "com.templlo.service.promotion": "com.templlo.service.promotion/**",
+  "com.templlo.service.reservation": "com.templlo.service.reservation/**",
+  "com.templlo.service.temple": "com.templlo.service.temple/**",
+  "com.templlo.service.program": "com.templlo.service.program/**",
+  "com.templlo.service.review": "com.templlo.service.review/**"
 }
