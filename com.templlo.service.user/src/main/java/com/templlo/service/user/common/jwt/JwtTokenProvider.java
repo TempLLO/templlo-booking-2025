@@ -3,8 +3,11 @@ package com.templlo.service.user.common.jwt;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.RedisConnectionFailureException;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import com.templlo.service.user.entity.enums.UserRole;
@@ -22,6 +25,8 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @RequiredArgsConstructor
 public class JwtTokenProvider {
+
+	private final RedisTemplate<String, String> redisTemplate;
 
 	private static final String CLAIM_LOGIN_ID = "loginId";
 	private static final String CLAIM_USER_ROLE = "role";
@@ -49,7 +54,20 @@ public class JwtTokenProvider {
 	}
 
 	public String createRefreshToken(String loginId, UserRole role) {
-		return generateToken(loginId, role, REFRESH_TOKEN, REFRESH_TOKEN_EXPIRE_TIME);
+		String refreshToken = generateToken(loginId, role, REFRESH_TOKEN, REFRESH_TOKEN_EXPIRE_TIME);
+
+		try {
+			redisTemplate.opsForValue().set(
+				loginId,
+				refreshToken,
+				REFRESH_TOKEN_EXPIRE_TIME,
+				TimeUnit.MILLISECONDS
+			);
+		} catch (RedisConnectionFailureException e) {
+			log.error(" Redis Connection Failed ");
+		}
+
+		return refreshToken;
 	}
 
 	private String generateToken(String loginId, UserRole role, String tokenType, long expireTime) {
