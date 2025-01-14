@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs: # 이 job의 결과를 다른 job에서 사용할 수 있도록 output 설정
       matrix: ${{ steps.filter.outputs.changes }}
-      generated_service: ${{ steps.load-filters.outputs.generated_services }}
+      generated_directories: ${{ steps.load-filters.outputs.generated_directories }}
     steps:
       - uses: actions/checkout@v4
       - name: Load JSON and Generate Filters
@@ -26,12 +26,12 @@ jobs:
           filters=$(cat .github/workflows/filters.json)
           
           # Generate filters
-          #generated_path=$(echo "$filters" | jq -r -c '
+          #generated_service=$(echo "$filters" | jq -r -c '
           #  to_entries
           #  | map("\(.key):\n  - \(.value)")
           #  | join("\n")
           #')
-          generated_service=$(echo "$filters" | jq -c 'to_entries | map({key: .key, value: (.value | sub("/\\*\\*$"; ""))}) | from_entries')
+          generated_directory=$(echo "$filters" | jq -c 'to_entries | map({key: .key, value: (.value))}) | from_entries')
           
           
           echo "Generated Filters:"
@@ -39,8 +39,8 @@ jobs:
           echo "$generated_service"
           
           # Output the generated filters
-          #echo "generated_filters=$generated_path" >> $GITHUB_OUTPUT
-          echo "generated_services=$generated_service" >> $GITHUB_OUTPUT
+          #echo "generated_filters=$generated_service" >> $GITHUB_OUTPUT
+          echo "generated_directories=$generated_directory" >> $GITHUB_OUTPUT
         shell: bash
 
 #      - name: Debug Output
@@ -57,19 +57,19 @@ jobs:
           filters: |
             gateway:
               - 'gateway/**'
-            server:
+            eureka-server:
               - 'server/**'
-            com.templlo.service.user:
+            user:
               - 'com.templlo.service.user/**'
-            com.templlo.service.promotion:
+            promotion:
               - 'com.templlo.service.promotion/**'
-            com.templlo.service.reservation:
+            reservation:
               - 'com.templlo.service.reservation/**'
-            com.templlo.service.temple:
+            temple:
               - 'com.templlo.service.temple/**'
-            com.templlo.service.program:
+            program:
               - 'com.templlo.service.program/**'
-            com.templlo.service.review:
+            review:
               - 'com.templlo.service.review/**'
 
       - name: Use Filtered Results
@@ -85,8 +85,6 @@ jobs:
       fail-fast: false  # 하나의 서비스 실패해도 다른 서비스 계속 빌드
       matrix:
         service: ${{ fromJSON(needs.changes_ci.outputs.matrix) }}
-#        generated_service: ${{ fromJSON(needs.changes_ci.outputs.generated_service) }}
-
 
     steps:
       - name: Checkout
@@ -95,20 +93,20 @@ jobs:
       - name: Logging matrix.service
         run: echo "${{ matrix.service }}"
 
-      - name: Logging needs.changes_ci.outputs.generated_service
-        run: echo "${{ needs.changes_ci.outputs.generated_service }}"
+      - name: Logging needs.changes_ci.outputs.generated_directories
+        run: echo "${{ needs.changes_ci.outputs.generated_directories }}"
 
-      - name: Logging needs.changes_ci.outputs.generated_service as map
+      - name: Logging needs.changes_ci.outputs.generated_directories as map
         id: get-map
         run: |
           key=user
-          value=$(echo '${{ needs.changes_ci.outputs.generated_service }}' | jq -r --arg key "$key" '.[$key]')
+          value=$(echo '${{ needs.changes_ci.outputs.generated_directories }}' | jq -r --arg key "$key" '.[$key]')
           echo "$value"
 
-          echo "map_value=$value" >> $GITHUB_OUTPUT
+          echo "changed_directory=$value" >> $GITHUB_OUTPUT
 
-      - name: Logging needs.changes_ci.outputs.generated_service as map - result
-        run: echo "${{ steps.get-map.outputs.map_value }}"
+      - name: Logging needs.changes_ci.outputs.generated_directories as map - result
+        run: echo "${{ steps.get-map.outputs.changed_directory }}"
 
       - name: Logging steps.filter.outputs.changes
         run: echo "${{ steps.filter.outputs.changes }}"
@@ -122,7 +120,7 @@ jobs:
           cache: gradle
 
       - name: Build and Test
-        working-directory: ${{ matrix.service }}
+        working-directory: ${{ steps.get-map.outputs.changed_directory }}
         run: |
           echo "Building ${{ matrix.service }}"
           chmod +x gradlew
