@@ -50,6 +50,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Logging matrix.service
+        run: echo "${{ matrix.service }}"
+
+      - name: Logging steps.filter.outputs.changes
+        run: echo "${{ steps.filter.outputs.changes }}"
+
+
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
