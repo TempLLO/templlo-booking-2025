@@ -82,40 +82,6 @@ jobs:
               - 'com.templlo.service.review/**'
 
 
-#  build:
-#    needs: changes
-#    if: ${{ needs.changes.outputs.matrix != '[]' }}
-#
-#    name: Build Jar
-#    runs-on: ubuntu-latest
-#
-#    strategy:
-#      fail-fast: false  # 하나의 서비스 실패해도 다른 서비스 계속 빌드
-#      matrix:
-#        service: ${{ fromJSON(needs.changes.outputs.matrix) }}
-#
-#    steps:
-#    - name: Checkout
-#      uses: actions/checkout@v4
-#
-#    - name: Set up JDK 17
-#      uses: actions/setup-java@v3
-#      with:
-#        java-version: '17'
-#        distribution: 'temurin'
-#
-#    - name: Grant execute permission for gradlew
-#      run: chmod +x gradlew
-#
-#    - name: Build with Gradle
-#      run: ./gradlew clean build
-#
-#    - name: Upload Build Artifacts
-#      uses: actions/upload-artifact@v3
-#      with:
-#        name: build-libs-${{ matrix.service }}
-#        path: build/libs/*.jar
-
 
   deploy:
     needs: changes
@@ -129,8 +95,6 @@ jobs:
       fail-fast: false  # 하나의 서비스 실패해도 다른 서비스 계속 빌드
       matrix:
         service: ${{ fromJSON(needs.changes.outputs.matrix) }}
-        service_ci: ${{ fromJSON(needs.changes_ci.outputs.matrix) }}
-
 
     steps:
     - name: Checkout
@@ -139,7 +103,7 @@ jobs:
     - name: Download Build Artifacts
       uses: actions/download-artifact@v3
       with:
-        name: build-libs-${{ matrix.service_ci }}
+        name: build-libs-${{ matrix.service }}
         path: build/libs
 
     - name: Configure AWS credentials
