@@ -154,7 +154,7 @@ jobs:
 
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
-        working-directory: ${{ matix.service }}
+        working-directory: ${{ matrix.service }}
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: templlo-2025-g1/${{ matrix.service }}
