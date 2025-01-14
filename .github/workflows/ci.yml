@@ -25,16 +25,16 @@ jobs:
           filters=$(cat .github/workflows/filters.json)
           
           # Generate filters
-          generated=$(echo "$filters" | jq -r '
-            to_entries
-            | map("\(.key):\n  - \(.value)")
-            | join("\n")
-          ')
+          # generated=$(echo "$filters" | jq -r '
+          #  to_entries
+          #  | map("\(.key):\n  - \(.value)")
+          #  | join("\n")
+          #')
           generated_path=$(echo "$filters" | jq 'to_entries | map({key: .key, value: (.value | sub("/\\*\\*$"; ""))}) | from_entries')
           
           
           echo "Generated Filters:"
-          echo "$generated"
+          echo "generated_path"
           
           # Output the generated filters
           echo "generated_filters=$generated_path" >> $GITHUB_OUTPUT
