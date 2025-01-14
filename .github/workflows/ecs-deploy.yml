@@ -98,6 +98,12 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
+    - name: Debug logging matrix.service
+      run: echo "${{ matrix.service }}"
+
+    - name: Debug logging needs.changes.outputs.matrix
+      run: echo "${{ needs.changes.outputs.matrix }}"
+
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
