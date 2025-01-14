@@ -85,12 +85,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-#
-#      - name: Logging matrix.service
-#        run: echo "${{ matrix.service }}"
-#
-#      - name: Logging needs.changes-ci.outputs.service-directory
-#        run: echo "${{ needs.changes-ci.outputs.service-directory }}"
 
       - name: Get changed service directory from map
         id: get-changed
@@ -99,13 +93,6 @@ jobs:
           directory=$(echo '${{ needs.changes-ci.outputs.service-directory }}' | jq -r --arg key "$service_name" '.[$key]')
           echo "$directory"
           echo "directory=$directory" >> $GITHUB_OUTPUT
-
-#      - name: Logging steps.get-changed.outputs.directory (from map)
-#        run: echo "${{ steps.get-changed.outputs.directory }}"
-#
-#      - name: Logging steps.filter.outputs.changes
-#        run: echo "${{ steps.filter.outputs.changes }}"
-
 
       - name: Set up JDK 17
         uses: actions/setup-java@v3
