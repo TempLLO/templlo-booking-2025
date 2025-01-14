@@ -101,7 +101,7 @@ jobs:
       - name: Logging needs.changes_ci.outputs.generated_service as map
         run: |
           key=user
-          value=$(echo "${{ needs.changes_ci.outputs.generated_service }}" | jq -r --arg key "$key" '.[$key]')
+          value=$(echo '${{ needs.changes_ci.outputs.generated_service }}' | jq -r --arg key "$key" '.[$key]')
 
 
 
