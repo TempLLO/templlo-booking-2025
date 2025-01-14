@@ -34,7 +34,7 @@ jobs:
           
           
           echo "Generated Filters:"
-          echo "generated_path"
+          echo "$generated_path"
           
           # Output the generated filters
           echo "generated_filters=$generated_path" >> $GITHUB_OUTPUT
