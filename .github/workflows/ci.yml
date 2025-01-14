@@ -14,11 +14,11 @@ jobs:
     runs-on: ubuntu-latest
     outputs: # 이 job의 결과를 다른 job에서 사용할 수 있도록 output 설정
       matrix: ${{ steps.filter.outputs.changes }}
-      service-directories: ${{ steps.load-filters.outputs.service-directories }}
+      service-directories: ${{ steps.load-service-directory.outputs.service-directories }}
     steps:
       - uses: actions/checkout@v4
       - name: Load JSON and Generate Filters
-        id: load-filters
+        id: load-service-directory
         run: |
           # Load filters.json
           filters=$(cat .github/workflows/filters.json)
@@ -40,17 +40,11 @@ jobs:
           echo "service-directories=$service_name_map" >> $GITHUB_OUTPUT
         shell: bash
 
-      #      - name: Debug Output
-      #        run: |
-      #          echo "Filters from load-filters:"
-      #          echo "${{ steps.load-filters.outputs.generated_filters }}"
-      #          echo "${{ steps.load-filters.outputs.generated_filters }}"
-
       - name: Apply Filters with Paths-Filter
         id: filter
         uses: dorny/paths-filter@v2
         with:
-          #          filters: ${{ steps.load-filters.outputs.generated_filters }}
+          #          filters: ${{ steps.load-service-directory.outputs.generated_filters }}
           filters: |
             gateway:
               - 'gateway/**'
