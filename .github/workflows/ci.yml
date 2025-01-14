@@ -8,43 +8,50 @@ on: #main을 타켓으로 PR 올리거나, main에 Merge 될 때 워크플로우
     #    branches: [ "main" ]
     branches: [ "deploy/71/ecs-deploy" ]
 
+
+env:
+  AWS_REGION: ap-northeast-2                  # set this to your preferred AWS region, e.g. us-west-1
+
+
 jobs:
+
+
 
   changes-ci:
     runs-on: ubuntu-latest
     outputs: # 이 job의 결과를 다른 job에서 사용할 수 있도록 output 설정
       matrix: ${{ steps.filter.outputs.changes }}
-      service-directories: ${{ steps.load-service-directory.outputs.service-directories }}
+      service-directories: ${{ steps.load-service-directories.outputs.service-directories }}
     steps:
       - uses: actions/checkout@v4
       - name: Load JSON and Generate Filters
-        id: load-service-directory
+        id: load-service-directories
         run: |
-          # Load filters.json
-          filters=$(cat .github/workflows/service.json)
+          # Load service_directories.json
+          service_directories_json=$(cat .github/workflows/service-directories.json)
           
-          # Generate filters
-          #generated_service=$(echo "$filters" | jq -r -c '
+          # Generate service-directories
+          #generated_service=$(echo "$service_directories_json" | jq -r -c '
           #  to_entries
           #  | map("\(.key):\n  - \(.value)")
           #  | join("\n")
           #')
-          service_name_map=$(echo "$filters" | jq -c 'to_entries | map({key: .key, value: (.value)}) | from_entries')
+          service_directory_map=$(echo "$service_directories_json" | jq -c 'to_entries | map({key: .key, value: (.value)}) | from_entries')
           
-          echo "Generated Filters:"
+          echo "Generated service-directories:"
           #echo "$generated_path"
-          echo "$service_name"
+          echo "$service_directory_map"
           
-          # Output the generated filters
+          # Output the generated service-directories
           #echo "generated_filters=$generated_service" >> $GITHUB_OUTPUT
-          echo "service-directories=$service_name_map" >> $GITHUB_OUTPUT
+          echo "service-directories=$service_directory_map" >> $GITHUB_OUTPUT
         shell: bash
 
       - name: Apply Filters with Paths-Filter
         id: filter
         uses: dorny/paths-filter@v2
         with:
-          #          filters: ${{ steps.load-service-directory.outputs.generated_filters }}
+          #          filters: ${{ steps.load-service-directories.outputs.generated_filters }}
           filters: |
             gateway:
               - 'gateway/**'
@@ -62,9 +69,11 @@ jobs:
               - 'com.templlo.service.program/**'
             review:
               - 'com.templlo.service.review/**'
+
       - name: Use Filtered Results
         run: |
           echo "Filters Matched: ${{ steps.filter.outputs.changes }}"
+
   build:
     needs: changes-ci
     if: ${{ needs.changes-ci.outputs.matrix != '[]' }}
@@ -86,14 +95,16 @@ jobs:
         run: echo "${{ needs.changes-ci.outputs.service-directories }}"
 
       - name: Logging needs.changes-ci.outputs.service-directories as map
-        id: get-service-name
+        id: get-changed
         run: |
           key=${{ matrix.service }}
           value=$(echo '${{ needs.changes-ci.outputs.service-directories }}' | jq -r --arg key "$key" '.[$key]')
           echo "$value"
-          echo "changed_service=$value" >> $GITHUB_OUTPUT
-      - name: Logging needs.changes-ci.outputs.service-directories as map - result
-        run: echo "${{ steps.get-service-name.outputs.changed_service }}"
+
+          echo "directory=$value" >> $GITHUB_OUTPUT
+
+      - name: Logging steps.get-changed.outputs.directory (from map)
+        run: echo "${{ steps.get-changed.outputs.directory }}"
 
       - name: Logging steps.filter.outputs.changes
         run: echo "${{ steps.filter.outputs.changes }}"
@@ -107,17 +118,56 @@ jobs:
           cache: gradle
 
       - name: Build and Test
-        working-directory: ${{ steps.get-service-name.outputs.changed_service }}
+        working-directory: ${{ matrix.service }}
         run: |
           echo "Building ${{ matrix.service }}"
           chmod +x gradlew
           ./gradlew clean build
+
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: build-libs-${{ matrix.service }}
-          path: ${{ steps.get-service-name.outputs.changed_service }}/build/libs/*.jar
+          name: build-libs-${{ steps.get-changed.outputs.directory }}
+          path: ${{ matrix.service }}/build/libs/*.jar
 
-#  upload_build_result:
-#    name: Upload to ECR
-#
+  upload_ecr:
+    name: Upload to ECR
+    needs: [changes-ci, build]
+    if: ${{ needs.changes-ci.outputs.matrix != '[]' && github.event_name == 'push' }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false  # 하나의 서비스 실패해도 다른 서비스 계속 빌드
+      matrix:
+        service: ${{ fromJSON(needs.changes-ci.outputs.matrix) }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: templlo-2025-g1/${{ matrix.service }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          # Build a docker container and
+          # push it to ECR so that it can
+          # be deployed to ECS.
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+
+
