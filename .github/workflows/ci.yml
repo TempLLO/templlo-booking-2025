@@ -130,4 +130,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: build-libs-${{ matrix.service }}
-          path: ${{ matrix.service }}/build/libs/*.jar
+          path: ${{ steps.get-map.outputs.changed_directory }}/build/libs/*.jar
