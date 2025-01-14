@@ -27,12 +27,13 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 
 		String loginId = request.getHeader("X-Login-Id");
 		String role = request.getHeader("X-User-Role");
+		String accessToken = request.getHeader("X-Token");
 
 		log.info("Request loginId : {} , role : {}", loginId, role);
 
 		if (loginId != null && role != null) {
-			GatewayUserDetailsImpl userDetails = new GatewayUserDetailsImpl(loginId, role);
-			Authentication authentication = new PreAuthenticatedAuthenticationToken(userDetails, null,
+			GatewayUserDetailsImpl userDetails = new GatewayUserDetailsImpl(loginId, role, accessToken);
+			Authentication authentication = new PreAuthenticatedAuthenticationToken(userDetails, accessToken,
 				userDetails.getAuthorities());
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 
