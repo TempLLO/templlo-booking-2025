@@ -6,3 +6,4 @@ test 4
 eureka ecr test 1
 eureka ecr test 1.1
 eureka ecr test 1.2
+eureka ecr test 1.3
