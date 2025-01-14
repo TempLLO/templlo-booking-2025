@@ -1,7 +1,7 @@
 {
   "gateway": "gateway/**",
   "server": "server/**",
-  "com.templlo.service.user": "com.templlo.service.user/**",
+  "user": "com.templlo.service.user/**",
   "com.templlo.service.promotion": "com.templlo.service.promotion/**",
   "com.templlo.service.reservation": "com.templlo.service.reservation/**",
   "com.templlo.service.temple": "com.templlo.service.temple/**",

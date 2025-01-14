@@ -26,19 +26,20 @@ jobs:
           filters=$(cat .github/workflows/filters.json)
           
           # Generate filters
-          generated_path=$(echo "$filters" | jq -r -c '
-            to_entries
-            | map("\(.key):\n  - \(.value)")
-            | join("\n")
-          ')
+          #generated_path=$(echo "$filters" | jq -r -c '
+          #  to_entries
+          #  | map("\(.key):\n  - \(.value)")
+          #  | join("\n")
+          #')
           generated_service=$(echo "$filters" | jq -c 'to_entries | map({key: .key, value: (.value | sub("/\\*\\*$"; ""))}) | from_entries')
           
           
           echo "Generated Filters:"
-          echo "$generated_path"
+          #echo "$generated_path"
+          echo "$generated_service"
           
           # Output the generated filters
-          echo "generated_filters=$generated_path" >> $GITHUB_OUTPUT
+          #echo "generated_filters=$generated_path" >> $GITHUB_OUTPUT
           echo "generated_services=$generated_service" >> $GITHUB_OUTPUT
         shell: bash
 
@@ -52,35 +53,28 @@ jobs:
         id: filter
         uses: dorny/paths-filter@v2
         with:
-          filters: ${{ steps.load-filters.outputs.generated_filters }}
+#          filters: ${{ steps.load-filters.outputs.generated_filters }}
+          filters: |
+            gateway:
+              - 'gateway/**'
+            server:
+              - 'server/**'
+            com.templlo.service.user:
+              - 'com.templlo.service.user/**'
+            com.templlo.service.promotion:
+              - 'com.templlo.service.promotion/**'
+            com.templlo.service.reservation:
+              - 'com.templlo.service.reservation/**'
+            com.templlo.service.temple:
+              - 'com.templlo.service.temple/**'
+            com.templlo.service.program:
+              - 'com.templlo.service.program/**'
+            com.templlo.service.review:
+              - 'com.templlo.service.review/**'
 
       - name: Use Filtered Results
         run: |
           echo "Filters Matched: ${{ steps.filter.outputs.changes }}"
-
-
-
-
-#      - uses: dorny/paths-filter@v2 # 어떤 서비스 디렉토리가 변경되었는지 감지
-#        id: filter
-#        with:
-#          filters: |
-#            gateway:
-#              - 'gateway/**'
-#            server:
-#              - 'server/**'
-#            com.templlo.service.user:
-#              - 'com.templlo.service.user/**'
-#            com.templlo.service.promotion:
-#              - 'com.templlo.service.promotion/**'
-#            com.templlo.service.reservation:
-#              - 'com.templlo.service.reservation/**'
-#            com.templlo.service.temple:
-#              - 'com.templlo.service.temple/**'
-#            com.templlo.service.program:
-#              - 'com.templlo.service.program/**'
-#            com.templlo.service.review:
-#              - 'com.templlo.service.review/**'
 
   build:
     needs: changes_ci
@@ -103,6 +97,13 @@ jobs:
 
       - name: Logging needs.changes_ci.outputs.generated_service
         run: echo "${{ needs.changes_ci.outputs.generated_service }}"
+
+      - name: Logging needs.changes_ci.outputs.generated_service as map
+        run: |
+          key=user
+          value=$(echo "${{ needs.changes_ci.outputs.generated_service }}" | jq -r --arg key "$key" '.[$key]')
+
+
 
       - name: Logging steps.filter.outputs.changes
         run: echo "${{ steps.filter.outputs.changes }}"
