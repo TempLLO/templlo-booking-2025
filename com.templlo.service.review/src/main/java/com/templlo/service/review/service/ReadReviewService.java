@@ -10,8 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.templlo.service.review.common.response.ApiResponse;
 import com.templlo.service.review.common.security.UserDetailsImpl;
 import com.templlo.service.review.entity.Review;
-import com.templlo.service.review.external.feignClient.client.UserClient;
-import com.templlo.service.review.external.feignClient.dto.UserData;
+import com.templlo.service.review.feignClient.client.UserClient;
+import com.templlo.service.review.feignClient.dto.UserData;
 import com.templlo.service.review.repository.ReviewRepository;
 
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package com.templlo.service.review.external.feignClient.dto;
+package com.templlo.service.review.feignClient.dto;
 
 import java.util.UUID;
 

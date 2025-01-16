@@ -1,4 +1,4 @@
-package com.templlo.service.review.external.feignClient;
+package com.templlo.service.review.feignClient;
 
 import org.springframework.stereotype.Component;
 

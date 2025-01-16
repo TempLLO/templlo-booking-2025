@@ -11,13 +11,13 @@ import com.templlo.service.review.common.exception.baseException.NonReviewableEx
 import com.templlo.service.review.common.response.ApiResponse;
 import com.templlo.service.review.dto.CreateReviewRequestDto;
 import com.templlo.service.review.entity.Review;
-import com.templlo.service.review.external.feignClient.client.ReservationClient;
-import com.templlo.service.review.external.feignClient.client.UserClient;
-import com.templlo.service.review.external.feignClient.dto.ReservationData;
-import com.templlo.service.review.external.feignClient.dto.ReservationStatus;
-import com.templlo.service.review.external.feignClient.dto.UserData;
-import com.templlo.service.review.external.kafka.producer.dto.ReviewCreatedEventDto;
-import com.templlo.service.review.external.kafka.producer.ReviewEventProducer;
+import com.templlo.service.review.feignClient.client.ReservationClient;
+import com.templlo.service.review.feignClient.client.UserClient;
+import com.templlo.service.review.feignClient.dto.ReservationData;
+import com.templlo.service.review.feignClient.dto.ReservationStatus;
+import com.templlo.service.review.feignClient.dto.UserData;
+import com.templlo.service.review.event.dto.ReviewCreatedEventDto;
+import com.templlo.service.review.event.internal.producer.ReviewInternalEventProducer;
 import com.templlo.service.review.repository.ReviewRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -32,26 +32,36 @@ public class CreateReviewService {
 	private final ReviewRepository reviewRepository;
 	private final UserClient userClient;
 	private final ReservationClient reservationClient;
-	private final ReviewEventProducer eventProducer;
+	private final ReviewInternalEventProducer internalEventProducer;
 
 	@Transactional
 	public void createReview(CreateReviewRequestDto request, String loginId) {
-		ApiResponse<UserData> userResponse = userClient.getUserInfo(loginId);
-		UUID userId = userResponse.data().id();
+		UUID userId = getUserId(loginId);
 		validateDuplicatedReview(request, userId);
 
-		ResponseEntity<ApiResponse<ReservationData>> reserveResponse = reservationClient.getReservationInfo(request.reservationId());
-		validateReservationStatus(reserveResponse);
+		// ResponseEntity<ApiResponse<ReservationData>> reserveResponse = reservationClient.getReservationInfo(request.reservationId());
+		// validateReservationStatus(reserveResponse);
 
-		UUID reservationId = reserveResponse.getBody().data().reservationId();
-		UUID programId = reserveResponse.getBody().data().programId();
-
-		Review review = Review.create(reservationId, programId, userId, request.rating(), request.content());
+		//Review review = createReview(request, reserveResponse, userId);
+		UUID programId = UUID.fromString("1f4188f9-bca3-40c5-9e6f-b298e0354d20");
+		Review review = Review.create(UUID.randomUUID(), programId, userId, request.rating(), request.content());
 		reviewRepository.save(review);
 
-		// TODO 트랜잭션이 순차적으로 진행되는건지 확인이 필요(트러블슈팅 사항 : DB 트랜잭션이 종료 되기전에 이벤트가 발행된다면?) #1
+
 		ReviewCreatedEventDto eventDto = ReviewCreatedEventDto.of(loginId, review);
-		eventProducer.publishReviewCreated(eventDto);
+		internalEventProducer.publishReviewCreated(eventDto);
+	}
+
+	private UUID getUserId(String loginId) {
+		ApiResponse<UserData> userResponse = userClient.getUserInfo(loginId);
+		return userResponse.data().id();
+	}
+
+	private void validateDuplicatedReview(CreateReviewRequestDto request, UUID userId) {
+		reviewRepository.findByUserIdAndReservationId(userId, request.reservationId())
+			.ifPresent(review -> {
+				throw new DuplicatedReviewException();
+			});
 	}
 
 	private static void validateReservationStatus(ResponseEntity<ApiResponse<ReservationData>> reserveResponse) {
@@ -60,11 +70,13 @@ public class CreateReviewService {
 		}
 	}
 
-	private void validateDuplicatedReview(CreateReviewRequestDto request, UUID userId) {
-		reviewRepository.findByUserIdAndReservationId(userId, request.reservationId())
-			.ifPresent(review -> {
-				throw new DuplicatedReviewException();
-			});
+	private static Review createReview(CreateReviewRequestDto request,
+		ResponseEntity<ApiResponse<ReservationData>> reserveResponse, UUID userId) {
+
+		UUID reservationId = reserveResponse.getBody().data().reservationId();
+		UUID programId = reserveResponse.getBody().data().programId();
+
+		return Review.create(reservationId, programId, userId, request.rating(), request.content());
 	}
 
 }

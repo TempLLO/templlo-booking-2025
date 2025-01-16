@@ -1,4 +1,4 @@
-package com.templlo.service.review.external.kafka.topic;
+package com.templlo.service.review.event.external.topic;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

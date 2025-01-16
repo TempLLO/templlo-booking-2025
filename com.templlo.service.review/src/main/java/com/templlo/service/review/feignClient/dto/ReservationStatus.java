@@ -1,4 +1,4 @@
-package com.templlo.service.review.external.feignClient.dto;
+package com.templlo.service.review.feignClient.dto;
 
 public enum ReservationStatus {
 	PROCESSING,
