@@ -29,6 +29,7 @@ public enum ErrorCode implements StatusCode {
 	// 서버 에러
 	NPE(HttpStatus.INTERNAL_SERVER_ERROR, "NPE"),
 	INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류입니다."),
+	JSON_PARSING_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "json 파싱 에러가 발생했습니다. "),
 
 	EXTERNAL_SERVICE_ERROR(HttpStatus.SERVICE_UNAVAILABLE, "외부 서비스 연동 중 오류가 발생했습니다.");
 
