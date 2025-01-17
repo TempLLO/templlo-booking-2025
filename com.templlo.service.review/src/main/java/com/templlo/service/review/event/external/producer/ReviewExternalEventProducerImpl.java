@@ -39,9 +39,8 @@ public class ReviewExternalEventProducerImpl implements ReviewExternalEventProdu
 
 		try {
 			ReviewCreatedEventDto payload = objectMapper.readValue(outbox.getPayload(), ReviewCreatedEventDto.class);
-			CompletableFuture<SendResult<String, Object>> future = kafkaTemplate.send(outbox.getEventType(), payload);
 
-			future.orTimeout(2000, TimeUnit.MILLISECONDS) // 2초 안에 전송되지 않으면 예외
+			kafkaTemplate.send(outbox.getEventType(), payload)
 				.whenComplete((result, ex) -> {
 					if (ex == null) {
 						outBoxService.updateStatus(outbox.getReviewId(), true);
