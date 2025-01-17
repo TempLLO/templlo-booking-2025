@@ -27,7 +27,7 @@ public class ReviewOutbox {
 	private Long id;
 
 	@Column(nullable = false)
-	private String topic;
+	private String eventType;
 
 	@Column(nullable = false)
 	private UUID reviewId;
@@ -45,16 +45,16 @@ public class ReviewOutbox {
 	private LocalDateTime updatedAt;
 
 	@Builder(access = AccessLevel.PRIVATE)
-	public ReviewOutbox(String topic, UUID reviewId, String payload) {
-		this.topic = topic;
+	public ReviewOutbox(String eventType, UUID reviewId, String payload) {
+		this.eventType = eventType;
 		this.reviewId = reviewId;
 		this.status = EventStatus.INIT;
 		this.payload = payload;
 		this.createdAt = LocalDateTime.now();
 	}
 
-	public static ReviewOutbox create(String topic, UUID reviewId, String payload){
-		return new ReviewOutbox(topic, reviewId, payload);
+	public static ReviewOutbox create(String eventType, UUID reviewId, String payload){
+		return new ReviewOutbox(eventType, reviewId, payload);
 	}
 
 	public void markAsPublished() {

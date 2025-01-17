@@ -1,4 +1,4 @@
-package com.templlo.service.review.event.external.topic;
+package com.templlo.service.review.event.topic;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

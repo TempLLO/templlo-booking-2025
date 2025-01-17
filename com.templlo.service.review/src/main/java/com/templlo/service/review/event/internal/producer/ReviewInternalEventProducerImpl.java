@@ -3,7 +3,7 @@ package com.templlo.service.review.event.internal.producer;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
-import com.templlo.service.review.event.dto.ReviewCreatedEventDto;
+import com.templlo.service.review.entity.ReviewOutbox;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +16,7 @@ public class ReviewInternalEventProducerImpl implements ReviewInternalEventProdu
 	private final ApplicationEventPublisher applicationEventPublisher;
 
 	@Override
-	public void publishReviewCreated(ReviewCreatedEventDto eventDto) {
-		applicationEventPublisher.publishEvent(eventDto);
+	public void publishReviewCreated(ReviewOutbox outbox) {
+		applicationEventPublisher.publishEvent(outbox);
 	}
 }

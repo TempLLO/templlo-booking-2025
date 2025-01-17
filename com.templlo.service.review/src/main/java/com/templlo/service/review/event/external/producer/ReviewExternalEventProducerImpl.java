@@ -1,6 +1,6 @@
 package com.templlo.service.review.event.external.producer;
 
-import static com.templlo.service.review.event.external.topic.ProducerTopic.*;
+import static com.templlo.service.review.event.topic.ProducerTopic.*;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -12,6 +12,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.templlo.service.review.entity.ReviewOutbox;
 import com.templlo.service.review.event.dto.ReviewCreatedEventDto;
 import com.templlo.service.review.event.dto.ReviewUpdatedEventDto;
 import com.templlo.service.review.service.ReviewOutboxService;
@@ -27,30 +29,32 @@ public class ReviewExternalEventProducerImpl implements ReviewExternalEventProdu
 	private final String EVENT_LOG = " *** [Topic] %s, [Message] %s";
 	private final KafkaTemplate<String, Object> kafkaTemplate;
 	private final ReviewOutboxService outBoxService;
+	private final ObjectMapper objectMapper;
 
 
 	@TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
 	@Async
 	@Override
-	public void publishReviewCreated(ReviewCreatedEventDto eventDto) {
+	public void publishReviewCreated(ReviewOutbox outbox) {
 
 		try {
-			CompletableFuture<SendResult<String, Object>> future = kafkaTemplate.send(REVIEW_CREATED.toString(), eventDto);
+			ReviewCreatedEventDto payload = objectMapper.readValue(outbox.getPayload(), ReviewCreatedEventDto.class);
+			CompletableFuture<SendResult<String, Object>> future = kafkaTemplate.send(outbox.getEventType(), payload);
 
-			future.orTimeout(2000, TimeUnit.MILLISECONDS)
+			future.orTimeout(2000, TimeUnit.MILLISECONDS) // 2초 안에 전송되지 않으면 예외
 				.whenComplete((result, ex) -> {
 					if (ex == null) {
-						outBoxService.updateStatus(eventDto.reviewId(), true);
-						log.info(String.format(EVENT_LOG, REVIEW_CREATED, eventDto));
+						outBoxService.updateStatus(outbox.getReviewId(), true);
+						log.info(String.format(EVENT_LOG, REVIEW_CREATED, outbox.getPayload()));
 					} else {
-						log.error("kafka 메시지 전송 실패 응답 : {}", ex.getMessage());
-						outBoxService.updateStatus(eventDto.reviewId(), false);
+						log.error("Get error msg from Kafka : {}", ex.getMessage());
+						outBoxService.updateStatus(outbox.getReviewId(), false);
 					}
 				});
 
 		} catch (Exception ex) {
 			log.error("Failed to publish event because {}", ex.getMessage());
-			outBoxService.updateStatus(eventDto.reviewId(), false);
+			outBoxService.updateStatus(outbox.getReviewId(), false);
 		}
 
 	}

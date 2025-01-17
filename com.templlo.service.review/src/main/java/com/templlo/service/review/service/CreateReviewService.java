@@ -6,18 +6,23 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.templlo.service.review.common.exception.baseException.DuplicatedReviewException;
+import com.templlo.service.review.common.exception.baseException.JsonParsingException;
 import com.templlo.service.review.common.exception.baseException.NonReviewableException;
 import com.templlo.service.review.common.response.ApiResponse;
 import com.templlo.service.review.dto.CreateReviewRequestDto;
 import com.templlo.service.review.entity.Review;
+import com.templlo.service.review.entity.ReviewOutbox;
+import com.templlo.service.review.event.dto.ReviewCreatedEventDto;
+import com.templlo.service.review.event.internal.producer.ReviewInternalEventProducer;
+import com.templlo.service.review.event.topic.ProducerTopic;
 import com.templlo.service.review.feignClient.client.ReservationClient;
 import com.templlo.service.review.feignClient.client.UserClient;
 import com.templlo.service.review.feignClient.dto.ReservationData;
 import com.templlo.service.review.feignClient.dto.ReservationStatus;
 import com.templlo.service.review.feignClient.dto.UserData;
-import com.templlo.service.review.event.dto.ReviewCreatedEventDto;
-import com.templlo.service.review.event.internal.producer.ReviewInternalEventProducer;
 import com.templlo.service.review.repository.ReviewRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -33,23 +38,34 @@ public class CreateReviewService {
 	private final UserClient userClient;
 	private final ReservationClient reservationClient;
 	private final ReviewInternalEventProducer internalEventProducer;
+	private final ObjectMapper objectMapper;
 
 	@Transactional
 	public void createReview(CreateReviewRequestDto request, String loginId) {
 		UUID userId = getUserId(loginId);
 		validateDuplicatedReview(request, userId);
 
-		// ResponseEntity<ApiResponse<ReservationData>> reserveResponse = reservationClient.getReservationInfo(request.reservationId());
-		// validateReservationStatus(reserveResponse);
+		ResponseEntity<ApiResponse<ReservationData>> reserveResponse = reservationClient.getReservationInfo(request.reservationId());
+		validateReservationStatus(reserveResponse);
 
-		//Review review = createReview(request, reserveResponse, userId);
-		UUID programId = UUID.fromString("1f4188f9-bca3-40c5-9e6f-b298e0354d20");
-		Review review = Review.create(UUID.randomUUID(), programId, userId, request.rating(), request.content());
+		Review review = createReview(request, reserveResponse, userId);
 		reviewRepository.save(review);
 
+		publishReviewCreatedEvent(loginId, review);
+	}
 
-		ReviewCreatedEventDto eventDto = ReviewCreatedEventDto.of(loginId, review);
-		internalEventProducer.publishReviewCreated(eventDto);
+	private void publishReviewCreatedEvent(String loginId, Review review) {
+		try {
+			ReviewCreatedEventDto eventDto = ReviewCreatedEventDto.of(loginId, review);
+			String jsonData = objectMapper.writeValueAsString(eventDto);
+
+			ReviewOutbox outbox = ReviewOutbox.create(ProducerTopic.REVIEW_CREATED.getTopic(), review.getId(), jsonData);
+
+			internalEventProducer.publishReviewCreated(outbox);
+		} catch (JsonParsingException | JsonProcessingException ex) {
+			log.error("Failed to save outbox message : {} ", ex.getMessage());
+			throw new JsonParsingException();
+		}
 	}
 
 	private UUID getUserId(String loginId) {

@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
-import com.templlo.service.review.event.dto.ReviewCreatedEventDto;
+import com.templlo.service.review.entity.ReviewOutbox;
 import com.templlo.service.review.service.ReviewOutboxService;
 
 import lombok.RequiredArgsConstructor;
@@ -18,8 +18,8 @@ public class ReviewInternalEventListener {
 	private final ReviewOutboxService outBoxService;
 
 	@TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
-	public void handleReviewCreatedEvent(ReviewCreatedEventDto eventDto) {
-		outBoxService.saveEvent(eventDto);
+	public void handleReviewCreatedEvent(ReviewOutbox outbox) {
+		outBoxService.saveEvent(outbox);
 	}
 
 }
