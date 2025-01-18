@@ -79,7 +79,7 @@ jobs:
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
         env:
-          ECR_REGISTRY: ${{AWS_ECR_URI}}
+          ECR_REGISTRY: ${{ env.AWS_ECR_URI }}
         run: |
           # Build Docker image
           docker build -t $ECR_REGISTRY/eureka-service:latest ./server
