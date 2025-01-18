@@ -84,6 +84,7 @@ jobs:
         run: |
           # Build Docker image
           pwd
+          ls -al
           docker build -t eureka-service:latest ./server
 
           # Push Docker image
