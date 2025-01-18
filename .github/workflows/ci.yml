@@ -81,7 +81,7 @@ jobs:
         env:
          # ECR_REGISTRY: ${{ env.AWS_ECR_URI }}
           ECR_REGISTRY: 354891846810.dkr.ecr.ap-northeast-2.amazonaws.com/templlo-booking-2025
-        working-directory: ./server
+        working-directory: server
         run: |
           # Build Docker image
           pwd
