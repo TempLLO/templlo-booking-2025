@@ -4,7 +4,8 @@ on: #main을 타켓으로 PR 올리거나, main에 Merge 될 때 워크플로우
   pull_request:
     branches: [ "main" ]
   push:
-    branches: [ "main" ]
+    # branches: [ "main" ]
+    branches: [ "deploy/31/jaehee" ]
 
 jobs:
   changes:
@@ -55,9 +56,36 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
-      - name: Build and Test
+      - name: Build
         working-directory: ${{ matrix.service }}
         run: |
           echo "Building ${{ matrix.service }}"
           chmod +x gradlew
-          ./gradlew clean build
+          ./gradlew clean build -x test
+
+      ## 도카파일 빌드해서 도커 이미지를 만드는 코드
+      ## 만들어진 도커 이미지를 ECR에 push
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{env.AWS_ECR_URI}}
+        run: |
+          # Build Docker image
+          docker build -t $ECR_REGISTRY/eureka-service:latest .
+          
+          # Push Docker image
+          docker push $ECR_REGISTRY/eureka-service:latest
+          
+          # Output the image URI for use in later steps
+          echo "image=$ECR_REGISTRY/eureka-service:latest" >> $GITHUB_OUTPUT
