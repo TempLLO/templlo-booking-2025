@@ -83,9 +83,10 @@ jobs:
           ECR_REGISTRY: 354891846810.dkr.ecr.ap-northeast-2.amazonaws.com/templlo-booking-2025
         run: |
           # Build Docker image
+          cd ../server
           pwd
           ls -al
-          docker build -t eureka-service:latest ../server
+          docker build -t eureka-service:latest .
 
           # Push Docker image
           docker push $ECR_REGISTRY/eureka-service:latest
