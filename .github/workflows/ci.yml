@@ -43,7 +43,12 @@ jobs:
     strategy:
       fail-fast: false  # 하나의 서비스 실패해도 다른 서비스 계속 빌드
       matrix:
-        service: ${{ fromJSON(needs.changes.outputs.matrix) }}
+        ##service: ${{ fromJSON(needs.changes.outputs.matrix) }}
+        include:
+          - service: server
+            env_vars: |
+              EUREKA_SERVER_URL=${{ secrets.EUREKA_SERVER_URL }}
+              EUREKA_HOSTNAME=${{ secrets.EUREKA_HOSTNAME }}
 
     steps:
       - name: Checkout
@@ -82,11 +87,20 @@ jobs:
          # ECR_REGISTRY: ${{ env.AWS_ECR_URI }}
           ECR_REGISTRY: 354891846810.dkr.ecr.ap-northeast-2.amazonaws.com/templlo-booking-2025
         run: |
-          # Build Docker image # tag 이름 서비스 이름 받아오는걸로 수정 
-          docker build -t $ECR_REGISTRY/eureka-service:latest ./${{ matrix.service }} 
+          # 환경변수 파일 생성
+          echo "${{ matrix.env_vars }}" > .env
+
+#          # Build Docker image
+#          docker build -t $ECR_REGISTRY/${{ matrix.service }}:latest ./${{ matrix.service }}
+
+           # Build Docker image with env vars
+          docker build \
+            --env-file .env \
+            -t $ECR_REGISTRY/${{ matrix.service }}:latest ./${{ matrix.service }} 
+
 
           # Push Docker image # 이미지 푸쉬할때 타겟 레포지토리 어디로 감?? 태그명 가지고 알아서 찾아가는 듯. 
-          docker push $ECR_REGISTRY/eureka-service:latest
+          docker push $ECR_REGISTRY/${{ matrix.service }}:latest
           
           # Output the image URI for use in later steps
-          echo "image=$ECR_REGISTRY/eureka-service:latest" >> $GITHUB_OUTPUT
+          echo "image=$ECR_REGISTRY/${{ matrix.service }}:latest" >> $GITHUB_OUTPUT

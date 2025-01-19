@@ -8,6 +8,6 @@ eureka:
     register-with-eureka: false
     fetch-registry: false
     service-url:
-      defaultZone: http://eureka-server:19090/eureka/
+      defaultZone: ${EUREKA_SERVER_URL}
   instance:
-    hostname: eureka-server
+    hostname: ${EUREKA_HOSTNAME}
