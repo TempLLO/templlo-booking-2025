@@ -82,10 +82,10 @@ jobs:
          # ECR_REGISTRY: ${{ env.AWS_ECR_URI }}
           ECR_REGISTRY: 354891846810.dkr.ecr.ap-northeast-2.amazonaws.com/templlo-booking-2025
         run: |
-          # Build Docker image
-          docker build -t $ECR_REGISTRY/eureka-service:latest ./${{ matrix.service }}
+          # Build Docker image # tag 이름 서비스 이름 받아오는걸로 수정 
+          docker build -t $ECR_REGISTRY/eureka-service:latest ./${{ matrix.service }} 
 
-          # Push Docker image
+          # Push Docker image # 이미지 푸쉬할때 타겟 레포지토리 어디로 감?? 태그명 가지고 알아서 찾아가는 듯. 
           docker push $ECR_REGISTRY/eureka-service:latest
           
           # Output the image URI for use in later steps
