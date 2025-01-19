@@ -82,6 +82,9 @@ jobs:
           if [ "${{ matrix.service }}" == "server" ]; then
             echo "EUREKA_SERVER_URL=${{ secrets.EUREKA_SERVER_URL }}" >> .env
             echo "EUREKA_HOSTNAME=${{ secrets.EUREKA_HOSTNAME }}" >> .env
+          elif [ "${{ matrix.service }}" == "gateway" ]; then
+            echo "EUREKA_SERVER_URL=${{ secrets.EUREKA_SERVER_URL }}" >> .env
+            echo "JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}" >> .env
           fi
 
       - name: Build, tag, and push image to Amazon ECR
