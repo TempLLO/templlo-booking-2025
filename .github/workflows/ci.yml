@@ -90,11 +90,22 @@ jobs:
          # ECR_REGISTRY: ${{ env.AWS_ECR_URI }}
           ECR_REGISTRY: 354891846810.dkr.ecr.ap-northeast-2.amazonaws.com/templlo-booking-2025
         run: |
+          # Convert service name to repository name
+          if [ "${{ matrix.service }}" == "server" ]; then REPO_NAME="eureka-service"
+          elif [ "${{ matrix.service }}" == "gateway" ]; then REPO_NAME="gateway-service"
+          elif [ "${{ matrix.service }}" == "com.templlo.service.user" ]; then REPO_NAME="user-service"
+          elif [ "${{ matrix.service }}" == "com.templlo.service.promotion" ]; then REPO_NAME="promotion-service"
+          elif [ "${{ matrix.service }}" == "com.templlo.service.reservation" ]; then REPO_NAME="reservation-service"
+          elif [ "${{ matrix.service }}" == "com.templlo.service.temple" ]; then REPO_NAME="temple-service"
+          elif [ "${{ matrix.service }}" == "com.templlo.service.program" ]; then REPO_NAME="program-service"
+          elif [ "${{ matrix.service }}" == "com.templlo.service.review" ]; then REPO_NAME="review-service"
+          fi
+          
           # Build Docker image with env vars
-          docker build --build-arg ENV_FILE=.env -t $ECR_REGISTRY/${{ matrix.service }}:latest ./${{ matrix.service }}
+          docker build --build-arg ENV_FILE=.env -t $ECR_REGISTRY/$REPO_NAME:latest ./${{ matrix.service }}
           
           # Push Docker image # 이미지 푸쉬할때 타겟 레포지토리 어디로 감?? 태그명 가지고 알아서 찾아가는 듯.
-          docker push $ECR_REGISTRY/${{ matrix.service }}:latest
+          docker push $ECR_REGISTRY/$REPO_NAME:latest
           
           # Output the image URI for use in later steps
-          echo "image=$ECR_REGISTRY/${{ matrix.service }}:latest" >> $GITHUB_OUTPUT
+          echo "image=$ECR_REGISTRY/$REPO_NAME:latest" >> $GITHUB_OUTPUT
