@@ -47,8 +47,8 @@ jobs:
         include:
           - service: server
             env_vars: |
-              EUREKA_SERVER_URL=${{ secrets.EUREKA_SERVER_URL }}
-              EUREKA_HOSTNAME=${{ secrets.EUREKA_HOSTNAME }}
+              EUREKA_SERVER_URL: ${{ secrets.EUREKA_SERVER_URL }}
+              EUREKA_HOSTNAME: ${{ secrets.EUREKA_HOSTNAME }}
 
     steps:
       - name: Checkout
