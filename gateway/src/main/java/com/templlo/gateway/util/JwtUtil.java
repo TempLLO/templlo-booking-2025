@@ -20,7 +20,7 @@ public class JwtUtil {
 	private static final String ACCESS_TOKEN = "access";
 	private static final String REFRESH_TOKEN = "refresh";
 
-	@Value("${jwt.secret}")
+	@Value("${JWT_SECRET_KEY}")
 	private String key;
 
 	public JwtValidType validateToken(String accessToken) {
