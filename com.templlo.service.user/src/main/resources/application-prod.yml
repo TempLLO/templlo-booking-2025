@@ -33,6 +33,9 @@ eureka:
       defaultZone: ${EUREKA_SERVER_URL}
     register-with-eureka: true
     fetch-registry: true
+  instance:
+    prefer-ip-address: true
+    hostname: user-service
 
 logging:
   level:

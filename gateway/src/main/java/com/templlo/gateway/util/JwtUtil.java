@@ -24,12 +24,6 @@ public class JwtUtil {
 	@Value("${jwt.secret}")
 	private String key;
 
-	@PostConstruct
-	public void init() {
-		System.out.println("fuck JWT Secret: " + key);
-		System.out.println("Environment JWT_SECRET_KEY: " + System.getenv("JWT_SECRET_KEY"));
-	}
-
 	public JwtValidType validateToken(String accessToken) {
 
 		if (!StringUtils.hasText(accessToken)) {
