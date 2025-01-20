@@ -10,4 +10,5 @@ eureka:
     service-url:
       defaultZone: ${EUREKA_SERVER_URL}
   instance:
-    hostname: ${EUREKA_HOSTNAME}
+    hostname: eureka-server
+    prefer-ip-address: false
