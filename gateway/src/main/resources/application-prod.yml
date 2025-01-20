@@ -56,7 +56,6 @@ eureka:
   instance:
     prefer-ip-address: true
     hostname: gateway-service
-    ip-address: ${ECS_CONTAINER_METADATA_FILE}
 
 logging:
   level:
