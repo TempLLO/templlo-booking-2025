@@ -45,9 +45,6 @@ spring:
           uri: lb://promotion-service
           predicates:
             - Path=/api/promotions/**, /api/coupons/**
-      discovery:
-        locator:
-          enabled: true
 
 jwt:
   secret: ${JWT_SECRET_KEY}
