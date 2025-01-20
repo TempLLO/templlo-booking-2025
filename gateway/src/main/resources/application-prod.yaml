@@ -58,6 +58,7 @@ eureka:
       defaultZone: ${EUREKA_SERVER_URL}
   instance:
     prefer-ip-address: true
+    ip-address: ${ECS_CONTAINER_IP}
 
 logging:
   level:
