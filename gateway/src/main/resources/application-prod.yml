@@ -54,8 +54,9 @@ eureka:
     service-url:
       defaultZone: ${EUREKA_SERVER_URL}
   instance:
-    prefer-ip-address: false
+    prefer-ip-address: true
     hostname: gateway-service
+    ip-address: ${ECS_CONTAINER_METADATA_FILE}
 
 logging:
   level:
