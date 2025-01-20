@@ -10,6 +10,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.SignatureException;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j(topic = "== Gateway: Jwt Util ==")
@@ -20,8 +21,14 @@ public class JwtUtil {
 	private static final String ACCESS_TOKEN = "access";
 	private static final String REFRESH_TOKEN = "refresh";
 
-	@Value("${JWT_SECRET_KEY}")
+	@Value("${jwt.secret}")
 	private String key;
+
+	@PostConstruct
+	public void init() {
+		System.out.println("fuck JWT Secret: " + key);
+		System.out.println("Environment JWT_SECRET_KEY: " + System.getenv("JWT_SECRET_KEY"));
+	}
 
 	public JwtValidType validateToken(String accessToken) {
 
