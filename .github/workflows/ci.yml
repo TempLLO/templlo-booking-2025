@@ -63,8 +63,6 @@ jobs:
           chmod +x gradlew
           ./gradlew clean build -x test
 
-      ## 도카파일 빌드해서 도커 이미지를 만드는 코드
-      ## 만들어진 도커 이미지를 ECR에 push
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -107,7 +105,7 @@ jobs:
           # Build Docker image with env vars
           docker build --build-arg ENV_FILE=.env -t $ECR_REGISTRY/$REPO_NAME:latest ./${{ matrix.service }}
           
-          # Push Docker image # 이미지 푸쉬할때 타겟 레포지토리 어디로 감?? 태그명 가지고 알아서 찾아가는 듯.
+          # Push Docker image
           docker push $ECR_REGISTRY/$REPO_NAME:latest
           
           # Output the image URI for use in later steps
